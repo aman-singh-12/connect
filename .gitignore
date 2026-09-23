@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.production
+!.env.example
+!.env.production.example
+!.env.test
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Deploy history & temp files
+.deploy-history
+tmp/
+*.log
+npm-debug.log*
+
+# TLS certificates
+nginx/certs/*.pem
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Temporary scripts / scratch
+UI
+/UI/
+./UI/*
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+

@@ -1,0 +1,46 @@
+import * as Joi from 'joi';
+
+export const envValidationSchema = Joi.object({
+  // Server
+  PORT: Joi.number().default(3000),
+  NODE_ENV: Joi.string()
+    .valid('development', 'test', 'production')
+    .default('development'),
+
+  // Database
+  DB_HOST: Joi.string().required(),
+  DB_PORT: Joi.number().default(5432),
+  DB_USERNAME: Joi.string().required(),
+  DB_PASSWORD: Joi.string().required(),
+  DB_NAME: Joi.string().required(),
+  DB_SSL: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
+  DB_SSL_REJECT_UNAUTHORIZED: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
+
+  // Redis
+  REDIS_HOST: Joi.string().required(),
+  REDIS_PORT: Joi.number().default(6379),
+  REDIS_PASSWORD: Joi.string().optional().allow(''),
+  REDIS_TLS: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
+
+  // Auth
+  JWT_SECRET: Joi.string().min(32).required().messages({
+    'string.min': 'JWT_SECRET must be at least 32 characters for security',
+  }),
+  ACCESS_TOKEN_TTL: Joi.string().default('15m'),
+  REFRESH_TOKEN_TTL: Joi.string().default('7d'),
+
+  // Stripe (optional at boot — set when billing/webhooks are live)
+  STRIPE_SECRET_KEY: Joi.string().optional().allow(''),
+  STRIPE_WEBHOOK_SECRET: Joi.string().optional().allow(''),
+  STRIPE_PRICE_ID_PRO: Joi.string().optional().allow(''),
+  STRIPE_PRICE_ID_ENTERPRISE: Joi.string().optional().allow(''),
+  FRONTEND_URL: Joi.string().default('http://localhost:3001'),
+
+  // Email (SMTP) — env vars are strings; mail.config uses SMTP_SECURE === 'true'
+  SMTP_HOST: Joi.string().optional().default('localhost'),
+  SMTP_PORT: Joi.number().optional().default(587),
+  SMTP_SECURE: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
+  SMTP_USER: Joi.string().optional().allow(''),
+  SMTP_PASS: Joi.string().optional().allow(''),
+  SMTP_FROM: Joi.string().optional().default('Connect <noreply@connect.io>'),
+});
