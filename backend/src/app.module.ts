@@ -38,8 +38,10 @@ import { BillingModule } from './modules/billing/billing.module';
 import { MailModule } from './modules/mail/mail.module';
 import { HealthModule } from './modules/health/health.module';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     // Global config
     ConfigModule.forRoot({

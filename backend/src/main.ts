@@ -25,7 +25,9 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.enableShutdownHooks();
 
-  app.setGlobalPrefix(API_PREFIX);
+  app.setGlobalPrefix(API_PREFIX, {
+    exclude: ['/', 'health', 'health/(.*)'],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
