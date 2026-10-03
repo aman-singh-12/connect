@@ -67,6 +67,14 @@ It includes organization-based multi-tenancy, role-based access control, Kanban 
 
 ![Connect Authentication](screenshots/auth/login.png)
 
+### Mobile Responsive Experience
+
+**On-The-Go Navigation & Workspaces** — Fully optimized mobile view with slide-out navigation drawer and touch-friendly controls.
+
+| Mobile Dashboard | Mobile Projects | Mobile Team |
+|:---:|:---:|:---:|
+| ![Mobile Dashboard](screenshots/mobile-view/dashboard.png) | ![Mobile Projects](screenshots/mobile-view/project-list.png) | ![Mobile Team](screenshots/mobile-view/organization.png) |
+
 ---
 
 ## Use Connect as a Reference For

@@ -91,6 +91,15 @@ async function capture() {
     await new Promise(r => setTimeout(r, 2000));
     await page.screenshot({ path: path.join(screenshotsDir, 'dashboard', 'projects.png') });
 
+    // 7b. Project Detail
+    console.log('Capturing Project Detail page...');
+    const projectCard = await page.$('a[href*="/projects/"]');
+    if (projectCard) {
+      await projectCard.click();
+      await new Promise(r => setTimeout(r, 2500));
+      await page.screenshot({ path: path.join(screenshotsDir, 'dashboard', 'project-detail.png') });
+    }
+
     // 8. Organizations / Team Members
     console.log('Capturing Organizations page...');
     await page.goto('http://localhost:3001/organizations', { waitUntil: 'networkidle2', timeout: 30000 });
