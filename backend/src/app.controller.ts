@@ -1,10 +1,12 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
   @Get()
   @Public()
+  @SkipThrottle()
   @HttpCode(HttpStatus.OK)
   getRoot() {
     return {

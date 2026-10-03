@@ -18,39 +18,56 @@ export class ThrottlerRedisStorage {
     isBlocked: boolean;
     timeToBlockExpire: number;
   }> {
-    const redisKey = `rate:${key}`;
-    const totalHits = await this.redis.incr(redisKey);
+    try {
+      if (this.redis.status !== 'ready') {
+        return {
+          totalHits: 1,
+          timeToExpire: ttl,
+          isBlocked: false,
+          timeToBlockExpire: 0,
+        };
+      }
 
-    if (totalHits === 1) {
-      await this.redis.expire(redisKey, Math.ceil(ttl / 1000));
+      const redisKey = `rate:${key}`;
+      const totalHits = await this.redis.incr(redisKey);
+
+      if (totalHits === 1) {
+        await this.redis.expire(redisKey, Math.ceil(ttl / 1000));
+      }
+
+      const ttlRemaining = await this.redis.ttl(redisKey);
+
+      const blockKey = `rate:block:${key}`;
+      const isBlocked = (await this.redis.exists(blockKey)) === 1;
+      let timeToBlockExpire = 0;
+
+      if (isBlocked) {
+        timeToBlockExpire = (await this.redis.ttl(blockKey)) * 1000;
+      }
+
+      if (!isBlocked && blockDuration > 0 && totalHits > _limit) {
+        await this.redis.set(
+          blockKey,
+          '1',
+          'EX',
+          Math.ceil(blockDuration / 1000),
+        );
+        timeToBlockExpire = blockDuration;
+      }
+
+      return {
+        totalHits,
+        timeToExpire: ttlRemaining * 1000,
+        isBlocked: isBlocked || (blockDuration > 0 && totalHits > _limit),
+        timeToBlockExpire,
+      };
+    } catch {
+      return {
+        totalHits: 1,
+        timeToExpire: ttl,
+        isBlocked: false,
+        timeToBlockExpire: 0,
+      };
     }
-
-    const ttlRemaining = await this.redis.ttl(redisKey);
-
-    // Check if blocked (exceeded limit and block duration applies)
-    const blockKey = `rate:block:${key}`;
-    const isBlocked = (await this.redis.exists(blockKey)) === 1;
-    let timeToBlockExpire = 0;
-
-    if (isBlocked) {
-      timeToBlockExpire = (await this.redis.ttl(blockKey)) * 1000;
-    }
-
-    if (!isBlocked && blockDuration > 0 && totalHits > _limit) {
-      await this.redis.set(
-        blockKey,
-        '1',
-        'EX',
-        Math.ceil(blockDuration / 1000),
-      );
-      timeToBlockExpire = blockDuration;
-    }
-
-    return {
-      totalHits,
-      timeToExpire: ttlRemaining * 1000,
-      isBlocked: isBlocked || (blockDuration > 0 && totalHits > _limit),
-      timeToBlockExpire,
-    };
   }
 }

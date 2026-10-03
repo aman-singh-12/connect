@@ -8,9 +8,11 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '../../common/decorators/public.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 import { HealthService } from './health.service';
 import { RedisHealthIndicator } from './indicators/redis.health-indicator';
 
+@SkipThrottle()
 @Controller('health')
 export class HealthController {
   constructor(
