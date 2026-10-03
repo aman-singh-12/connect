@@ -10,18 +10,28 @@ import * as path from 'path';
       inject: [ConfigService],
       useFactory: (config: ConfigService): TypeOrmModuleOptions => {
         const ssl = config.get<{ rejectUnauthorized: boolean } | undefined>('database.ssl');
-        const base: TypeOrmModuleOptions = {
-          type: 'postgres',
-          host: config.get<string>('database.host'),
-          port: config.get<number>('database.port'),
-          username: config.get<string>('database.username'),
-          password: config.get<string>('database.password'),
-          database: config.get<string>('database.database'),
-          autoLoadEntities: true,
-          entities: [path.join(__dirname, '..', '..', '**', '*.entity.{ts,js}')],
-          synchronize: false,
-          logging: process.env.NODE_ENV === 'development',
-        };
+        const url = config.get<string | undefined>('database.url');
+        const base: TypeOrmModuleOptions = url
+          ? {
+              type: 'postgres',
+              url,
+              autoLoadEntities: true,
+              entities: [path.join(__dirname, '..', '..', '**', '*.entity.{ts,js}')],
+              synchronize: false,
+              logging: process.env.NODE_ENV === 'development',
+            }
+          : {
+              type: 'postgres',
+              host: config.get<string>('database.host'),
+              port: config.get<number>('database.port'),
+              username: config.get<string>('database.username'),
+              password: config.get<string>('database.password'),
+              database: config.get<string>('database.database'),
+              autoLoadEntities: true,
+              entities: [path.join(__dirname, '..', '..', '**', '*.entity.{ts,js}')],
+              synchronize: false,
+              logging: process.env.NODE_ENV === 'development',
+            };
         return ssl ? { ...base, ssl } : base;
       },
     }),
