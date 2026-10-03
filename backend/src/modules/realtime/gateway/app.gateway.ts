@@ -18,7 +18,7 @@ import { RealtimeService } from '../services/realtime.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: true,
     credentials: true,
   },
   transports: ['websocket', 'polling'],

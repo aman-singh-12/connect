@@ -45,7 +45,18 @@ async function bootstrap() {
   app.useGlobalFilters(new AppExceptionFilter());
   app.useGlobalInterceptors(new ResponseTransformInterceptor());
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-request-id',
+      'x-org-id',
+      'x-health-token',
+    ],
+  });
 
   // Required so Socket.IO attaches to the same HTTP server as REST (fixes ws:// connection failures).
   app.useWebSocketAdapter(new IoAdapter(app));
