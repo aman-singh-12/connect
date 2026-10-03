@@ -46,7 +46,8 @@ export const envValidationSchema = Joi.object({
   STRIPE_PRICE_ID_ENTERPRISE: Joi.string().optional().allow(''),
   FRONTEND_URL: Joi.string().default('http://localhost:3001'),
 
-  // Email (SMTP) — env vars are strings; mail.config uses SMTP_SECURE === 'true'
+  // Email (Brevo HTTP API or SMTP)
+  BREVO_API_KEY: Joi.string().optional().allow(''),
   SMTP_HOST: Joi.string().optional().default('localhost'),
   SMTP_PORT: Joi.number().optional().default(587),
   SMTP_SECURE: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),

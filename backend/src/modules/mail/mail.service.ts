@@ -31,12 +31,14 @@ export interface TaskAssignedEmailData {
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter?: nodemailer.Transporter;
+  private readonly brevoApiKey: string;
   private readonly from: string;
   private readonly frontendUrl: string;
   private readonly enabled: boolean;
 
   constructor(private readonly configService: ConfigService) {
+    this.brevoApiKey = this.configService.get<string>('mail.brevoApiKey', '');
     const host = this.configService.get<string>('mail.host', 'localhost');
     const port = this.configService.get<number>('mail.port', 587);
     const secure = this.configService.get<boolean>('mail.secure', false);
@@ -45,19 +47,22 @@ export class MailService {
     this.from = this.configService.get<string>('mail.from', 'Connect <noreply@connect.io>');
     this.frontendUrl = this.configService.get<string>('mail.frontendUrl', 'http://localhost:3001');
 
-    this.enabled = !!user && !!pass;
+    this.enabled = !!this.brevoApiKey || (!!user && !!pass);
 
-    this.transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      pool: true,
-      maxConnections: 3,
-      ...(this.enabled ? { auth: { user, pass } } : {}),
-    });
-
-    if (!this.enabled) {
-      this.logger.warn('SMTP credentials not configured — emails will be logged but not sent');
+    if (this.brevoApiKey) {
+      this.logger.log('Email delivery configured via Brevo HTTP API (Port 443 HTTPS)');
+    } else if (user && pass) {
+      this.logger.log(`Email delivery configured via SMTP (${host}:${port})`);
+      this.transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        pool: true,
+        maxConnections: 3,
+        auth: { user, pass },
+      });
+    } else {
+      this.logger.warn('Neither Brevo API Key nor SMTP configured — emails will be logged in console');
     }
   }
 
@@ -131,6 +136,51 @@ export class MailService {
     });
   }
 
+  private parseSender(fromStr: string): { name: string; email: string } {
+    const match = fromStr.match(/^(?:"?([^"]*)"?\s)?<?([^>]+)>?$/);
+    if (match && match[2]) {
+      return {
+        name: match[1]?.trim() || 'Connect',
+        email: match[2].trim(),
+      };
+    }
+    return { name: 'Connect', email: fromStr.trim() };
+  }
+
+  private async sendViaBrevo(options: {
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+  }): Promise<void> {
+    const sender = this.parseSender(this.from);
+    const payload = {
+      sender,
+      to: [{ email: options.to }],
+      subject: options.subject,
+      htmlContent: options.html,
+      textContent: options.text,
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': this.brevoApiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Brevo HTTP API error (${response.status}): ${errorText}`);
+    }
+
+    const resJson = (await response.json().catch(() => ({}))) as { messageId?: string };
+    this.logger.log(`Email successfully sent via Brevo HTTP API to ${options.to} (messageId: ${resJson.messageId || 'N/A'})`);
+  }
+
   private async send(options: {
     to: string;
     subject: string;
@@ -155,19 +205,25 @@ export class MailService {
         if (options.actionUrl) {
           console.log(`👉  Direct link: ${options.actionUrl}`);
         }
-        console.log('💡  Note: To send REAL emails to real inboxes, configure SMTP in backend/.env:');
-        console.log('    SMTP_HOST=smtp.gmail.com  SMTP_PORT=465  SMTP_SECURE=true');
-        console.log('    SMTP_USER=your_email@gmail.com  SMTP_PASS=your_app_password');
+        console.log('💡  Configure BREVO_API_KEY in .env for reliable HTTP delivery:');
+        console.log('    BREVO_API_KEY=xkeysib-...');
+        console.log('    SMTP_FROM="Connect" <your-verified-brevo-sender@email.com>');
         console.log('='.repeat(70) + '\n');
         return;
       }
 
-      await this.transporter.sendMail({
-        from: this.from,
-        ...options,
-      });
+      if (this.brevoApiKey) {
+        await this.sendViaBrevo(options);
+        return;
+      }
 
-      this.logger.log(`Email sent to ${options.to}: ${options.subject}`);
+      if (this.transporter) {
+        await this.transporter.sendMail({
+          from: this.from,
+          ...options,
+        });
+        this.logger.log(`Email sent via SMTP to ${options.to}: ${options.subject}`);
+      }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       this.logger.error(`Failed to send email to ${options.to}: ${err.message}`, err.stack);
