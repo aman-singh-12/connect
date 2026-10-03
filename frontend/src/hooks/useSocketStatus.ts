@@ -1,28 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getSocket } from '@/lib/socket';
+import { useSocketStore } from '@/lib/socket/client';
 
 export function useSocketStatus() {
-  const [connected, setConnected] = useState(false);
-
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    setConnected(socket.connected);
-
-    function onConnect() { setConnected(true); }
-    function onDisconnect() { setConnected(false); }
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-    };
-  }, []);
-
+  const connected = useSocketStore((s) => s.connected);
   return { connected };
 }

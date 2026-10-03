@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import { create } from 'zustand';
 
 function formatSocketUrl(rawUrl?: string): string {
   if (!rawUrl) return 'http://localhost:3000';
@@ -14,6 +15,16 @@ function formatSocketUrl(rawUrl?: string): string {
 
 const SOCKET_URL = formatSocketUrl(process.env.NEXT_PUBLIC_SOCKET_URL);
 
+interface SocketStore {
+  connected: boolean;
+  setConnected: (connected: boolean) => void;
+}
+
+export const useSocketStore = create<SocketStore>((set) => ({
+  connected: false,
+  setConnected: (connected) => set({ connected }),
+}));
+
 let socket: Socket | null = null;
 let currentOrgId: string | null = null;
 
@@ -22,7 +33,10 @@ export function getSocket(): Socket | null {
 }
 
 export function connectSocket(token: string): Socket {
-  if (socket?.connected) return socket;
+  if (socket?.connected) {
+    useSocketStore.getState().setConnected(true);
+    return socket;
+  }
 
   if (socket) {
     socket.removeAllListeners();
@@ -43,6 +57,7 @@ export function connectSocket(token: string): Socket {
 
   socket.on('connect', () => {
     console.debug('[Socket] Connected:', socket?.id);
+    useSocketStore.getState().setConnected(true);
     if (currentOrgId) {
       joinOrgRoom(currentOrgId);
     }
@@ -50,6 +65,7 @@ export function connectSocket(token: string): Socket {
 
   socket.on('disconnect', (reason) => {
     console.debug('[Socket] Disconnected:', reason);
+    useSocketStore.getState().setConnected(false);
   });
 
   socket.on('auth_error', (data: { message: string }) => {
@@ -59,6 +75,7 @@ export function connectSocket(token: string): Socket {
 
   socket.on('connect_error', (err) => {
     console.warn('[Socket] Connection warning:', err.message);
+    useSocketStore.getState().setConnected(false);
     if (err.message?.includes('unauthorized') || err.message?.includes('jwt')) {
       disconnectSocket();
     }
@@ -80,6 +97,7 @@ export function disconnectSocket(): void {
     socket = null;
   }
   currentOrgId = null;
+  useSocketStore.getState().setConnected(false);
 }
 
 export function joinOrgRoom(orgId: string): void {

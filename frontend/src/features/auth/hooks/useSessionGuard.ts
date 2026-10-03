@@ -27,10 +27,9 @@ export function useSessionGuard(mode: 'protected' | 'guest'): AuthStatus {
   const {
     status,
     accessToken,
-    refreshToken,
     currentOrganizationId,
     _hasHydrated,
-    setAuth,
+    setUser,
     setStatus,
     logout,
   } = useAuthStore();
@@ -59,7 +58,7 @@ export function useSessionGuard(mode: 'protected' | 'guest'): AuthStatus {
       .me()
       .then(({ data }) => {
         const serverUser = data.data!.user;
-        setAuth(serverUser, accessToken!, refreshToken!);
+        setUser(serverUser);
       })
       .catch((err: unknown) => {
         if (isAuthFailure(err)) {
@@ -74,7 +73,7 @@ export function useSessionGuard(mode: 'protected' | 'guest'): AuthStatus {
       .finally(() => {
         verifyingRef.current = false;
       });
-  }, [_hasHydrated, status, accessToken, refreshToken, setAuth, setStatus, logout]);
+  }, [_hasHydrated, status, accessToken, setUser, setStatus, logout]);
 
   // Optimistic session: verify in background so the UI does not wait on /me.
   useEffect(() => {
@@ -87,7 +86,7 @@ export function useSessionGuard(mode: 'protected' | 'guest'): AuthStatus {
     authApi
       .me()
       .then(({ data }) => {
-        setAuth(data.data!.user, accessToken!, refreshToken!);
+        setUser(data.data!.user);
       })
       .catch((err: unknown) => {
         backgroundSyncRef.current = false;
@@ -95,7 +94,7 @@ export function useSessionGuard(mode: 'protected' | 'guest'): AuthStatus {
           logout();
         }
       });
-  }, [_hasHydrated, status, accessToken, refreshToken, setAuth, logout]);
+  }, [_hasHydrated, status, accessToken, setUser, logout]);
 
   // Handle navigation based on status and mode — only after hydration
   useEffect(() => {

@@ -13,6 +13,7 @@ export interface AuthState {
   _hasHydrated: boolean;
 
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  setUser: (user: User) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setCurrentOrganization: (orgId: string) => void;
   setStatus: (status: AuthStatus) => void;
@@ -31,13 +32,20 @@ export const useAuthStore = create<AuthState>()(
       _hasHydrated: false,
 
       setAuth: (user, accessToken, refreshToken) =>
-        set({
+        set((state) => ({
           user,
           accessToken,
           refreshToken,
-          currentOrganizationId: user.currentOrganizationId,
+          currentOrganizationId: state.currentOrganizationId ?? user.currentOrganizationId,
           status: 'authenticated',
-        }),
+        })),
+
+      setUser: (user) =>
+        set((state) => ({
+          user,
+          currentOrganizationId: state.currentOrganizationId ?? user.currentOrganizationId,
+          status: 'authenticated',
+        })),
 
       setTokens: (accessToken, refreshToken) =>
         set({ accessToken, refreshToken }),

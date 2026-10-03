@@ -26,10 +26,10 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const { accessToken, currentOrganizationId } = useAuthStore.getState();
   if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    config.headers.set('Authorization', `Bearer ${accessToken}`);
   }
   if (currentOrganizationId) {
-    config.headers['x-organization-id'] = currentOrganizationId;
+    config.headers.set('x-organization-id', currentOrganizationId);
   }
   return config;
 });
@@ -55,11 +55,21 @@ function processQueue(error: unknown, token: string | null) {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
+    const originalRequest = error.config as (InternalAxiosRequestConfig & {
       _retry?: boolean;
-    };
+    }) | undefined;
 
-    if (error.response?.status !== 401 || originalRequest._retry) {
+    if (!originalRequest || error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    // Do not attempt refresh on authentication endpoints
+    const requestUrl = originalRequest.url ?? '';
+    if (
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/register') ||
+      requestUrl.includes('/auth/refresh')
+    ) {
       return Promise.reject(error);
     }
 
@@ -73,7 +83,8 @@ apiClient.interceptors.response.use(
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       }).then((token) => {
-        originalRequest.headers.Authorization = `Bearer ${token}`;
+        originalRequest._retry = true;
+        originalRequest.headers.set('Authorization', `Bearer ${token}`);
         return apiClient(originalRequest);
       });
     }
@@ -91,7 +102,7 @@ apiClient.interceptors.response.use(
       setTokens(newAccessToken, newRefreshToken);
       updateSocketToken(newAccessToken);
       processQueue(null, newAccessToken);
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+      originalRequest.headers.set('Authorization', `Bearer ${newAccessToken}`);
       return apiClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);

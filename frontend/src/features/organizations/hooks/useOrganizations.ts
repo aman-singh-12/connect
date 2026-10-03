@@ -26,9 +26,14 @@ export function useOrganizations() {
 }
 
 export function useCurrentOrganization() {
+  const currentOrganizationId = useAuthStore((s) => s.currentOrganizationId);
+  const { data: orgs, isSuccess } = useOrganizations();
+  const gate = computeOrgWorkspaceGate(orgs, isSuccess, currentOrganizationId);
+
   return useQuery({
     queryKey: orgKeys.current,
     queryFn: () => organizationsApi.getCurrent().then((r) => r.data.data!),
+    enabled: gate,
   });
 }
 

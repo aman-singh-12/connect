@@ -10,9 +10,7 @@ export const authKeys = {
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
-  const setAuth = useAuthStore((s) => s.setAuth);
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
+  const setUser = useAuthStore((s) => s.setUser);
 
   return useMutation({
     mutationFn: async (payload: UpdateProfilePayload) => {
@@ -21,8 +19,8 @@ export function useUpdateProfile() {
     },
     onSuccess: (body) => {
       const user = body?.data?.user;
-      if (user && accessToken && refreshToken) {
-        setAuth(user, accessToken, refreshToken);
+      if (user) {
+        setUser(user);
       }
       queryClient.invalidateQueries({ queryKey: authKeys.me });
     },

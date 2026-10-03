@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { getSocket } from '@/lib/socket';
+import { getSocket, useSocketStore } from '@/lib/socket/client';
 import { SocketEvents } from '@/lib/socket/events';
 import { useAuthStore } from '@/store/auth.store';
 import { useNotificationStore } from '@/store/notification.store';
@@ -28,10 +28,11 @@ import { orgKeys } from '@/features/organizations/hooks/useOrganizations';
 export function useSocketEvents() {
   const queryClient = useQueryClient();
   const hasConnectedBefore = useRef(false);
+  const connected = useSocketStore((s) => s.connected);
 
   useEffect(() => {
     const socket = getSocket();
-    if (!socket) return;
+    if (!socket || !connected) return;
 
     const seenEvents = new Set<string>();
 
@@ -45,6 +46,10 @@ export function useSocketEvents() {
         queryClient.invalidateQueries({ queryKey: ['activity'] });
       }
       hasConnectedBefore.current = true;
+    }
+
+    if (socket.connected) {
+      handleConnect();
     }
 
     // --- Event handler ---
@@ -153,7 +158,7 @@ export function useSocketEvents() {
         socket.off(eventType, handleEvent);
       });
     };
-  }, [queryClient]);
+  }, [queryClient, connected]);
 }
 
 function getEntityType(eventType: string): 'task' | 'project' | 'organization' | undefined {
