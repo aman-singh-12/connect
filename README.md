@@ -120,7 +120,7 @@ connect/
 │       ├── features/            # Feature modules (tasks, projects, orgs)
 │       ├── hooks/               # Shared hooks
 │       ├── lib/                 # API client, utils, socket
-│       ├── store/               # Zustand stores
+│       ├── store/               # Stand stores
 │       └── types/               # TypeScript interfaces
 │
 ├── backend/                     # NestJS 11 API
