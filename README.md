@@ -347,3 +347,103 @@ Client -> Next.js -> NestJS API
 - All mutations emit domain events
 - Events consumed by: Activity Logger, WebSocket Broadcaster, Notification Creator, Email Sender
 - Background worker processes audit log asynchronously
+
+---
+
+## Supabase PostgreSQL Health Monitoring
+
+Connect includes an automated health-monitoring and connectivity-verification system tailored for **Supabase PostgreSQL** hosted backends on **Render** and orchestrated via **GitHub Actions**.
+
+### 1. Architecture Overview
+
+```
+GitHub Actions (Every 3 days at 04:00 UTC)
+         │
+         │  HTTPS GET /api/v1/health/ready (with x-health-token)
+         ▼
+Render Backend Service (NestJS API)
+         │
+         │  SELECT 1 AS health_check; (with 5000ms timeout)
+         ▼
+Supabase PostgreSQL (Database / Pooler)
+```
+
+1. **GitHub Actions Workflow** executes periodically on schedule (`cron: "0 4 */3 * *"`) and supports manual runs (`workflow_dispatch`).
+2. **Backend Health Endpoint** verifies backend liveness, establishes/reuses the database connection pool, and executes an isolated, read-only query (`SELECT 1 AS health_check;`) with strict timeout handling.
+3. **Security**: When `HEALTH_CHECK_TOKEN` is configured, requests are verified using constant-time token comparison (`crypto.timingSafeEqual`). No database passwords, connection strings, or stack traces are ever leaked to clients or logs.
+
+---
+
+### 2. Health Endpoint Specifications
+
+| Endpoint | Method | Purpose | Successful Response (HTTP 200) | Failure Response (HTTP 503) |
+|---|---|---|---|---|
+| `/api/v1/health` | `GET` | Comprehensive status (PostgreSQL + Redis) | `{"status":"healthy","database":"connected","redis":"connected","databaseLatencyMs":14}` | `{"status":"unhealthy","database":"disconnected","redis":"connected"}` |
+| `/api/v1/health/ready` | `GET` | Database Readiness Probe (`SELECT 1;`) | `{"status":"healthy","database":"connected","latencyMs":12}` | `{"status":"unhealthy","database":"disconnected","error":"..."}` |
+| `/api/v1/health/live` | `GET` | Process Liveness Probe | `{"status":"ok","process":"running"}` | Process unresponsive / 500 |
+| `/api/v1/health/db` | `GET` | Dedicated Database Probe | `{"status":"healthy","database":"connected","latencyMs":12}` | `{"status":"unhealthy","database":"disconnected"}` |
+
+---
+
+### 3. GitHub Actions Workflow Configuration
+
+- **Workflow File**: [`.github/workflows/supabase-health-check.yml`](.github/workflows/supabase-health-check.yml)
+- **Schedule**: Every 3 days (`cron: "0 4 */3 * *"`) + manual trigger (`workflow_dispatch`).
+- **Runner**: `ubuntu-latest` with minimal `contents: read` permissions.
+
+#### Required GitHub Secrets:
+Navigate to your GitHub repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
+
+1. `HEALTH_CHECK_URL`: Your live Render backend health URL.
+   - Example: `https://connect-backend.onrender.com/api/v1/health/ready`
+2. `HEALTH_CHECK_TOKEN` *(Optional but recommended)*: Secret token shared between GitHub Actions and Render.
+   - Example: `a4b9c1f2e3d489...` (a random 32+ character string)
+
+---
+
+### 4. Required Render Environment Variables
+
+In your Render Dashboard (**connect** Web Service → **Environment**):
+
+| Variable | Recommended Value | Description |
+|---|---|---|
+| `DATABASE_URL` | `postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres?sslmode=require` | Supabase connection string (Direct or Session/Transaction Pooler) |
+| `DB_SSL` | `true` | Enables TLS for Supabase PostgreSQL connection |
+| `DB_SSL_REJECT_UNAUTHORIZED` | `false` | Accepts Supabase self-signed/pooler certificates |
+| `HEALTH_CHECK_TOKEN` | *(Same secret as in GitHub Secrets)* | Restricts health endpoint to authorized probes |
+| `NODE_ENV` | `production` | Production mode |
+
+---
+
+### 5. How to Manually Trigger and Verify
+
+1. Go to your GitHub repository → **Actions** tab.
+2. Select **"Supabase Database Health Check"** from the left workflows list.
+3. Click **Run workflow** → select branch `main` → click **Run workflow**.
+4. Click the running job to inspect execution time, HTTP status, and latency.
+
+---
+
+### 6. Troubleshooting & Resuming Paused Supabase Projects
+
+If the health check returns **HTTP 503** or fails:
+1. **Check Supabase Dashboard**: Log in to [supabase.com/dashboard](https://supabase.com/dashboard).
+2. **Resume Paused Project**: If the project displays "Paused", click **"Restore project"** (takes ~1-2 minutes).
+3. **Verify Pooler Connection**: If using connection pooler, verify whether port `5432` (Session pooler) or `6543` (Transaction pooler) is configured.
+4. **Test Locally**: Run `npm test` in the `backend` directory to verify health indicator mocks and assertions.
+
+---
+
+### 7. Supabase Free Plan Inactivity Policy & Limitations
+
+- **Inactivity Policy**: Supabase Free tier projects may be automatically paused after **1 week of no client requests**.
+- **Important Notice**: While automated 3-day health checks execute read-only queries against PostgreSQL, Supabase's pause heuristics can change. Automated pings do **not** guarantee prevention of inactivity pauses on the Free tier.
+- **For Mission-Critical 24/7 Availability**: Upgrading to the Supabase **Pro tier** permanently disables automatic pausing and guarantees dedicated compute resources.
+
+---
+
+### 8. Backup and Recovery Recommendations
+
+- **Automated Nightly Dumps**: Use `pg_dump` in a scheduled GitHub Action or cron job to save logical SQL dumps to secure S3/GCS storage.
+- **Supabase Pro Backups**: Supabase Pro tier provides automated daily backups and Point-In-Time Recovery (PITR) up to 7-30 days.
+

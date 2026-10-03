@@ -1,0 +1,83 @@
+name: Supabase Database Health Check
+
+on:
+  schedule:
+    # Runs every 3 days at 04:00 UTC
+    - cron: "0 4 */3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  supabase-health-check:
+    name: Supabase PostgreSQL Health & Activity Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Ping Supabase Database via Backend Health Endpoint
+        env:
+          HEALTH_URL: ${{ secrets.HEALTH_CHECK_URL }}
+          HEALTH_TOKEN: ${{ secrets.HEALTH_CHECK_TOKEN }}
+        run: |
+          set -e
+          echo "=================================================="
+          echo " Starting Supabase Database Health Monitoring"
+          echo " Timestamp: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "=================================================="
+
+          if [ -z "$HEALTH_URL" ]; then
+            echo "❌ ERROR: Missing required GitHub Secret: HEALTH_CHECK_URL"
+            echo "Please configure HEALTH_CHECK_URL in repository Settings -> Secrets and variables -> Actions"
+            echo "Example: https://your-backend.onrender.com/api/v1/health/ready"
+            exit 1
+          fi
+
+          # Prepare optional auth header without printing secret in logs
+          AUTH_HEADER=()
+          if [ -n "$HEALTH_TOKEN" ]; then
+            AUTH_HEADER=(-H "x-health-token: $HEALTH_TOKEN")
+            echo "🔒 Health check token provided (authenticated request)"
+          else
+            echo "ℹ️ Running public unauthenticated health probe"
+          fi
+
+          START_TIME=$(date +%s%N)
+
+          # Execute HTTPS request with timeout
+          HTTP_RESPONSE=$(curl \
+            --silent \
+            --show-error \
+            --write-out "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}" \
+            --max-time 30 \
+            "${AUTH_HEADER[@]}" \
+            "$HEALTH_URL") || CURL_EXIT_CODE=$?
+
+          if [ -n "$CURL_EXIT_CODE" ] && [ "$CURL_EXIT_CODE" -ne 0 ]; then
+            echo "❌ Network/cURL failure (exit code: $CURL_EXIT_CODE) when connecting to $HEALTH_URL"
+            exit 1
+          fi
+
+          # Extract status and response body
+          BODY=$(echo "$HTTP_RESPONSE" | sed -e '/HTTP_STATUS:/,$d')
+          HTTP_STATUS=$(echo "$HTTP_RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+          TIME_TOTAL=$(echo "$HTTP_RESPONSE" | grep "TIME_TOTAL:" | cut -d':' -f2)
+
+          echo "Response Time: ${TIME_TOTAL}s"
+          echo "HTTP Status: ${HTTP_STATUS}"
+          echo "Payload: $BODY"
+          echo "=================================================="
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Supabase PostgreSQL Database is healthy and connected!"
+            exit 0
+          else
+            echo "❌ Supabase PostgreSQL Database health check failed (HTTP $HTTP_STATUS)"
+            echo "Possible reasons:"
+            echo "  1. Database connection timed out or pool is exhausted."
+            echo "  2. Supabase Free tier project has been paused due to inactivity."
+            echo "  3. Invalid HEALTH_CHECK_TOKEN configured."
+            echo "  4. Render backend service is sleeping or updating."
+            exit 1
+          fi

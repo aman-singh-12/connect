@@ -7,14 +7,23 @@ export const envValidationSchema = Joi.object({
     .valid('development', 'test', 'production')
     .default('development'),
 
-  // Database
-  DB_HOST: Joi.string().required(),
+  // Database (Supports either direct DATABASE_URL or individual DB_* params)
+  DATABASE_URL: Joi.string().optional().allow(''),
+  DB_HOST: Joi.string().optional().default('localhost'),
   DB_PORT: Joi.number().default(5432),
-  DB_USERNAME: Joi.string().required(),
-  DB_PASSWORD: Joi.string().required(),
-  DB_NAME: Joi.string().required(),
+  DB_USERNAME: Joi.string().optional().default('postgres'),
+  DB_PASSWORD: Joi.string().optional().default('postgres'),
+  DB_NAME: Joi.string().optional().default('connect'),
   DB_SSL: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
   DB_SSL_REJECT_UNAUTHORIZED: Joi.string().valid('true', 'false', '1', '0', '').optional().allow(''),
+
+  // Supabase (Optional metadata)
+  SUPABASE_URL: Joi.string().optional().allow(''),
+  SUPABASE_ANON_KEY: Joi.string().optional().allow(''),
+  SUPABASE_SERVICE_ROLE_KEY: Joi.string().optional().allow(''),
+
+  // Health Monitoring Security (Optional token for protecting health endpoint)
+  HEALTH_CHECK_TOKEN: Joi.string().optional().allow(''),
 
   // Redis
   REDIS_URL: Joi.string().optional().allow(''),
