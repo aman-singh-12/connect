@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "npm --prefix backend run start:prod:with-migrations",
+    "start:prod": "npm --prefix backend run start:prod",
+    "start:prod:with-migrations": "npm --prefix backend run start:prod:with-migrations",
     "dev": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
