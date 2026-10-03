@@ -5,6 +5,12 @@ import { updateToken as updateSocketToken } from '@/lib/socket';
 function formatApiUrl(rawUrl?: string): string {
   if (!rawUrl) return 'http://localhost:3000';
   let url = rawUrl.trim();
+  while (url.startsWith('=')) {
+    url = url.slice(1).trim();
+  }
+  if ((url.startsWith('"') && url.endsWith('"')) || (url.startsWith("'") && url.endsWith("'"))) {
+    url = url.slice(1, -1).trim();
+  }
   if (url.endsWith('/')) {
     url = url.slice(0, -1);
   }
