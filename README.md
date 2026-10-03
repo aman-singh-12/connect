@@ -1,4 +1,4 @@
-![Connect Dashboard](screenshots/dashboard/1.png)
+![Connect Dashboard](screenshots/dashboard/dashboard-overview.png)
 
 # Connect — Multi-Tenant SaaS Project Management Platform
 
@@ -8,7 +8,7 @@ It includes organization-based multi-tenancy, role-based access control, Kanban 
 
 ## Live Demo
 
-**Demo:** [https://task-forge-demo.vercel.app](https://task-forge-demo.vercel.app)
+**Demo:** [https://connect-demo.vercel.app](https://connect-demo.vercel.app)
 
 ### Demo Account
 
@@ -40,66 +40,37 @@ It includes organization-based multi-tenancy, role-based access control, Kanban 
 
 ### Dashboard & Analytics
 
-**Overview** — Stats cards, task flow over time, and status mix.
+**Workspace Overview** — Key performance metrics, task flow over time, recent tasks, and real-time activity stream.
 
-![Dashboard overview with metrics and charts](screenshots/dashboard/1.png)
-
-**Operational view** — Workflow health, activity feed, priority mix, deadlines, and "My work."
-
-![Dashboard with workflow health and activity](screenshots/dashboard/2.png)
+![Connect Dashboard Overview](screenshots/dashboard/dashboard-overview.png)
 
 ### Kanban Board
 
-![Kanban task board](screenshots/dashboard/tasks.png)
+**Interactive Task Board** — Manage tasks across To Do, In Progress, In Review, and Done with priority badges and assignees.
 
-### Projects
+![Connect Kanban Board](screenshots/dashboard/tasks.png)
 
-**Project grid** — Workspace projects with search and card layout.
+### Projects Directory
 
-![Projects grid](screenshots/dashboard/projects.png)
+**Projects Grid** — Active workspace initiatives with search, progress tracking, and team allocations.
 
-**Project detail** — Single project header with board/table switcher and Kanban columns.
+![Connect Projects Grid](screenshots/dashboard/projects.png)
 
-![Project detail board view](screenshots/dashboard/project-detail.png)
+### Organization & Team Management
 
-### Organization Members
+**Team Roster & Access Control** — Manage organization members, roles (Owner, Admin, Member), and invitations.
 
-**Organizations** — Active workspace, metadata, and team access summary.
-
-![Organizations workspace](screenshots/dashboard/organization.png)
-
-**Team roster** — Members and pending invitations with role badges.
-
-![Team members and invitations](screenshots/dashboard/organization-2.png)
-
-**Invite member** — Modal with email, role, and send invitation.
-
-![Invite member modal](screenshots/dashboard/send-invitation.png)
-
-### Real-Time Notifications
-
-![Notification dropdown](screenshots/dashboard/notifications.png)
+![Connect Team Management](screenshots/dashboard/organization.png)
 
 ### Authentication
 
-Split-panel auth with shared branding.
+**Secure Workspace Access** — Split-panel authentication interface with JWT-based sessions.
 
-![Login](screenshots/auth/login.png)
-
-![Create workspace — registration](screenshots/auth/register.png)
-
-![Forgot password](screenshots/auth/forgot-password.png)
-
-### Mobile & Responsive
-
-![Mobile dashboard](screenshots/mobile-view/dashboard.png)
-![Mobile project list](screenshots/mobile-view/project-list.png)
-![Mobile project detail](screenshots/mobile-view/project-detail.png)
-![Mobile organizations](screenshots/mobile-view/organization.png)
+![Connect Authentication](screenshots/auth/login.png)
 
 ---
 
-## Use TaskForge as a Reference For
+## Use Connect as a Reference For
 
 - Building multi-tenant SaaS apps
 - Structuring a Next.js + NestJS monorepo
@@ -134,7 +105,7 @@ Split-panel auth with shared branding.
 ## Project Structure
 
 ```
-TaskForge/
+connect/
 ├── frontend/                    # Next.js 15 App Router
 │   └── src/
 │       ├── app/                 # Pages (auth, dashboard)
@@ -161,7 +132,7 @@ TaskForge/
 │       │   └── health/          # Health checks
 │       ├── infrastructure/      # Database, Redis, Queue
 │       ├── common/              # Guards, filters, decorators
-│       └── shared/              # Enums, interfaces, errors│
+│       └── shared/              # Enums, interfaces, errors
 ```
 
 ---
@@ -290,7 +261,7 @@ When SMTP is not configured, emails are logged to console for development visibi
 
 ## WebSocket Notifications
 
-TaskForge uses Socket.IO for real-time notifications:
+Connect uses Socket.IO for real-time notifications:
 
 1. **Connection**: Client connects with JWT token in handshake auth
 2. **Rooms**: Users join `user:{id}` (personal) and `org:{orgId}` (team) rooms
@@ -369,17 +340,3 @@ Client -> Next.js -> NestJS API
 - All mutations emit domain events
 - Events consumed by: Activity Logger, WebSocket Broadcaster, Notification Creator, Email Sender
 - Background worker processes audit log asynchronously
-
----
-
-## Contributing
-
-Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md) before submitting a pull request.
-
-See the [open issues](https://github.com/engmaryamameen/TaskForge/issues) for a list of known issues and planned features.
-
----
-
-## License
-
-MIT
