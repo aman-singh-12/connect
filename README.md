@@ -1,4 +1,3 @@
-![Connect Dashboard](screenshots/dashboard/dashboard-overview.png)
 
 # Connect — Multi-Tenant SaaS Project Management Platform
 
