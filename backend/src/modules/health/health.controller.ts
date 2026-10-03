@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Req,
   Res,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Public } from '../../common/decorators/public.decorator';
