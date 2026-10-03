@@ -1,5 +1,5 @@
 x-backend-image: &backend-image
-  image: ghcr.io/engmaryamameen/connect-backend:${TAG:-latest}
+  image: ghcr.io/aman-singh-12/connect-backend:${TAG:-latest}
 
 x-backend-env: &backend-env
   NODE_ENV: production

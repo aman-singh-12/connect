@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "TaskForge API",
-    "description": "Phase 1 + Phase 2 — Full System Flow Tests: Auth, Organizations, RBAC, Invitations, Projects, Tasks, Activity",
+    "name": "Connect API",
+    "description": "Full System Flow Tests: Auth, Organizations, RBAC, Invitations, Projects, Tasks, Activity, Notifications",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -44,7 +44,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/register", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@taskforge.dev\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@connect.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\"\n}" }}
         },
         {
           "name": "1.2 Register — Duplicate Email (should fail)",
@@ -54,7 +54,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/register", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@taskforge.dev\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@connect.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\"\n}" }}
         },
         {
           "name": "1.3 Login — Valid",
@@ -66,7 +66,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/login", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@taskforge.dev\",\n  \"password\": \"SecurePass123!\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@connect.com\",\n  \"password\": \"SecurePass123!\"\n}" }}
         },
         {
           "name": "1.4 Login — Wrong Password",
@@ -76,7 +76,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/login", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@taskforge.dev\",\n  \"password\": \"WrongPassword\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@connect.com\",\n  \"password\": \"WrongPassword\"\n}" }}
         },
         {
           "name": "1.5 Refresh Token — Valid",
@@ -120,7 +120,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/login", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@taskforge.dev\",\n  \"password\": \"SecurePass123!\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@connect.com\",\n  \"password\": \"SecurePass123!\"\n}" }}
         },
         {
           "name": "1.9 Register — User 2 (Member)",
@@ -133,7 +133,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/auth/register", "auth": { "type": "noauth" },
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"member@taskforge.dev\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Member\",\n  \"lastName\": \"User\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"member@connect.com\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Member\",\n  \"lastName\": \"User\"\n}" }}
         }
       ]
     },
@@ -150,7 +150,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/organizations",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"TaskForge Inc\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Connect Workspace\"\n}" }}
         },
         {
           "name": "2.2 List My Organizations",
@@ -173,7 +173,7 @@
           ]}}],
           "request": { "method": "POST", "url": "{{base_url}}/organizations/invites",
             "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "x-organization-id", "value": "{{organization_id}}" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"member@taskforge.dev\",\n  \"role\": \"member\"\n}" }}
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"member@connect.com\",\n  \"role\": \"member\"\n}" }}
         },
         {
           "name": "2.4 Accept Invite — User 2",

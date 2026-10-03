@@ -1,8 +1,8 @@
-# TaskForge — System Design
+# Connect — System Design
 
 ## 1. High-Level Architecture
 
-TaskForge follows a modular, service-oriented architecture with clear separation of concerns between frontend, API layer, and supporting infrastructure.
+Connect follows a modular, service-oriented architecture with clear separation of concerns between frontend, API layer, and supporting infrastructure.
 
 The system is designed as a **modular monolith** — not microservices. This is intentional: start modular, evolve to microservices only if scale demands it.
 
@@ -66,7 +66,7 @@ Auth  Projects  Activity   Org
 
 ## 2. Multi-Tenancy Strategy
 
-TaskForge uses a **shared database, shared schema** approach where all tenants (organizations) share the same database tables, and data is isolated using an `organization_id` column.
+Connect uses a **shared database, shared schema** approach where all tenants (organizations) share the same database tables, and data is isolated using an `organization_id` column.
 
 ### Why This Approach?
 
@@ -375,7 +375,7 @@ Tasks:
 
 ## 9. Data Access Strategy
 
-TaskForge uses a structured data access layer to enforce consistency and prevent business logic leakage into controllers.
+Connect uses a structured data access layer to enforce consistency and prevent business logic leakage into controllers.
 
 ### Structure
 
@@ -430,7 +430,7 @@ Service emits event
 
 ## 11. Consistency Model
 
-Not everything needs to be synchronous. TaskForge explicitly defines what requires strong vs. eventual consistency.
+Not everything needs to be synchronous. Connect explicitly defines what requires strong vs. eventual consistency.
 
 ### Strong Consistency (synchronous, blocking)
 
@@ -455,7 +455,7 @@ These can tolerate a delay of seconds without user impact. They are processed vi
 
 ## 12. Failure Handling Strategy
 
-Real systems fail. This section defines how TaskForge behaves when they do.
+Real systems fail. This section defines how Connect behaves when they do.
 
 ### API Failures
 
@@ -555,7 +555,7 @@ When a task is created:
 
 ## 15. Transaction Strategy
 
-For operations involving multiple writes, TaskForge defines explicit transaction boundaries to prevent partial state.
+For operations involving multiple writes, Connect defines explicit transaction boundaries to prevent partial state.
 
 ### When to Use Transactions
 
@@ -640,7 +640,7 @@ Security is not a feature — it is a constraint applied across every layer of t
 
 ## 17. Event-Driven Architecture (Internal)
 
-TaskForge uses internal domain events to decouple side effects from core business logic. This keeps modules independent and makes the system extensible.
+Connect uses internal domain events to decouple side effects from core business logic. This keeps modules independent and makes the system extensible.
 
 ### Event Bus
 
@@ -713,7 +713,7 @@ Performance is designed in, not optimized later. These patterns are applied from
 
 ## 19. Service Layer Separation
 
-As the system grows, a single "service" layer becomes a dumping ground. TaskForge separates service responsibilities explicitly.
+As the system grows, a single "service" layer becomes a dumping ground. Connect separates service responsibilities explicitly.
 
 ### Layers
 

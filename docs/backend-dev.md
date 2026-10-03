@@ -1,4 +1,4 @@
-# TaskForge Backend — Developer Guide
+# Connect Backend — Developer Guide
 
 > Every rule here exists because someone, somewhere, shipped a production bug by ignoring it.
 > Read the "Why" sections. They are more important than the rules themselves.
@@ -7,7 +7,7 @@
 
 ## 1. Architecture Mental Model
 
-TaskForge is a **modular monolith** — not microservices, not a traditional layered app.
+Connect is a **modular monolith** — not microservices, not a traditional layered app.
 
 ```
 src/

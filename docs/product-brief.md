@@ -1,4 +1,4 @@
-# TaskForge — Product Brief
+# Connect — Product Brief
 
 ## 1. Problem Statement
 
@@ -8,7 +8,7 @@ Additionally, many existing tools are either too complex (steep learning curve) 
 
 ## 2. Solution
 
-TaskForge is a multi-tenant project management platform that provides teams with a unified workspace to manage tasks, collaborate in real-time, and track progress efficiently.
+Connect is a multi-tenant project management platform that provides teams with a unified workspace to manage tasks, collaborate in real-time, and track progress efficiently.
 
 It is designed to balance simplicity with scalability, making it suitable for both small teams and growing organizations.
 
