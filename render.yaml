@@ -6,8 +6,8 @@ services:
     plan: free
     region: ohio
     rootDir: backend
-    buildCommand: npm install && npm run build
-    startCommand: node scripts/migrate-prod.cjs && node dist/main
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm run start:prod:with-migrations
     healthCheckPath: /api/v1/health/live
     envVars:
       - key: NODE_ENV
