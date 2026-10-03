@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Logger } from 'nestjs-pino';
@@ -26,7 +26,12 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   app.setGlobalPrefix(API_PREFIX, {
-    exclude: ['/', 'health', 'health/(.*)'],
+    exclude: [
+      { path: '', method: RequestMethod.GET },
+      { path: '/', method: RequestMethod.GET },
+      { path: 'health', method: RequestMethod.ALL },
+      { path: 'health/*path', method: RequestMethod.ALL },
+    ],
   });
 
   app.useGlobalPipes(
