@@ -53,8 +53,18 @@ async function bootstrap() {
       'Content-Type',
       'Authorization',
       'x-request-id',
+      'x-organization-id',
       'x-org-id',
       'x-health-token',
+      'Accept',
+      'Origin',
+      'X-Requested-With',
+    ],
+    exposedHeaders: [
+      'x-request-id',
+      'x-ratelimit-limit',
+      'x-ratelimit-remaining',
+      'x-ratelimit-reset',
     ],
   });
 
