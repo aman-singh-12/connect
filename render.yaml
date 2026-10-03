@@ -42,18 +42,12 @@ services:
         value: 7d
       - key: FRONTEND_URL
         sync: false
-      - key: SMTP_HOST
-        value: smtp.gmail.com
-      - key: SMTP_PORT
-        value: "465"
-      - key: SMTP_SECURE
-        value: "true"
-      - key: SMTP_USER
-        value: aman7t6s@gmail.com
-      - key: SMTP_PASS
+      - key: BREVO_API_KEY
         sync: false
+      - key: BREVO_SENDER_EMAIL
+        value: amansingh12826@gmail.com
       - key: SMTP_FROM
-        value: Connect <aman7t6s@gmail.com>
+        value: Connect <amansingh12826@gmail.com>
 
   # 2. Frontend Web Service (Next.js)
   - type: web
