@@ -34,9 +34,9 @@ export function DashboardKpiRow({
         value={totalTasks}
         hint={`${inProgressCount} in progress`}
         icon={<IconCheckSquare className="h-5 w-5" />}
-        accentClass="ring-blue-100"
-        iconBgClass="bg-[#EFF6FF]"
-        iconColorClass="text-[#2563EB]"
+        accentClass="ring-orange-100"
+        iconBgClass="bg-orange-50"
+        iconColorClass="text-orange-600"
       />
       <DashboardKpiCard
         label="In progress"

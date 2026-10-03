@@ -46,8 +46,8 @@ export function NoOrganizationState() {
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.07]"
             style={{
-              backgroundImage: `radial-gradient(circle at 20% 20%, #0c5fd9 0%, transparent 45%),
-                radial-gradient(circle at 80% 10%, #6366f1 0%, transparent 40%)`,
+              backgroundImage: `radial-gradient(circle at 20% 20%, #ea580c 0%, transparent 45%),
+                radial-gradient(circle at 80% 10%, #f97316 0%, transparent 40%)`,
             }}
           />
 

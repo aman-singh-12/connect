@@ -5,10 +5,10 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import type { Task } from '@/types';
 import { buildStatusDistribution } from '@/features/dashboard/lib/chart-data';
 
-/** Aligned with Status mix: blue / amber / emerald */
+/** Aligned with Status mix: orange / amber / emerald */
 const KEY_COLORS: Record<string, string> = {
-  todo: '#2563eb',
-  in_progress: '#f59e0b',
+  todo: '#EA580C',
+  in_progress: '#F59E0B',
   done: '#059669',
 };
 

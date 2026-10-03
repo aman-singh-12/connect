@@ -5,17 +5,17 @@
   /* Inter (via next/font on <html> --font-inter) drives all `font-sans` usage */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  /* Primary — Professional blue */
-  --color-primary-50: #EEF4FF;
-  --color-primary-100: #D9E6FF;
-  --color-primary-200: #B3CCFF;
-  --color-primary-300: #6B9AFF;
-  --color-primary-400: #4080FF;
-  --color-primary-500: #1D6AE5;
-  --color-primary-600: #0C5FD9;
-  --color-primary-700: #0A4EB3;
-  --color-primary-800: #083D8C;
-  --color-primary-900: #0A2540;
+  /* Primary — Vibrant orange & light orange */
+  --color-primary-50: #FFF7ED;
+  --color-primary-100: #FFEDD5;
+  --color-primary-200: #FED7AA;
+  --color-primary-300: #FDBA74;
+  --color-primary-400: #FB923C;
+  --color-primary-500: #F97316;
+  --color-primary-600: #EA580C;
+  --color-primary-700: #C2410C;
+  --color-primary-800: #9A3412;
+  --color-primary-900: #7C2D12;
 
   /* Neutral — refined slate grays */
   --color-neutral-50: #F8FAFC;
@@ -87,7 +87,7 @@
   --shadow-medium: 0 4px 6px -1px rgba(15,23,42,0.07), 0 2px 4px -2px rgba(15,23,42,0.05);
   --shadow-large: 0 10px 15px -3px rgba(15,23,42,0.08), 0 4px 6px -4px rgba(15,23,42,0.04);
   --shadow-overlay: 0 20px 25px -5px rgba(15,23,42,0.10), 0 8px 10px -6px rgba(15,23,42,0.06);
-  --shadow-glow-primary: 0 0 0 3px rgba(13,95,217,0.12);
+  --shadow-glow-primary: 0 0 0 3px rgba(234, 88, 12, 0.16);
 }
 
 @layer base {

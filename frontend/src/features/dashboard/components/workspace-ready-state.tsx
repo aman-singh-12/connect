@@ -83,8 +83,8 @@ export function WorkspaceReadyState({
             value: taskCount,
             hint: 'Tracked across the workspace',
             icon: IconCheckSquare,
-            bg: 'bg-[#EFF6FF]',
-            fg: 'text-[#2563EB]',
+            bg: 'bg-orange-50',
+            fg: 'text-orange-600',
           },
           {
             label: 'Team',

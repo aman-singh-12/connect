@@ -1,18 +1,21 @@
 'use strict';
 
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const argon2 = require('argon2');
 
+const { DataSource } = require('typeorm');
+
 async function seed() {
-  const configPath = path.join(
-    __dirname,
-    '..',
-    'dist',
-    'infrastructure',
-    'database',
-    'typeorm.config.js',
-  );
-  const { default: dataSource } = require(configPath);
+  const dataSource = new DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DB_NAME || 'connect',
+    ssl: false,
+  });
   await dataSource.initialize();
 
   try {

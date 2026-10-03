@@ -11,7 +11,7 @@ export function AuthVisualPanel({ title, description }: AuthVisualPanelProps) {
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(165deg, #2563eb 0%, #1e3a8a 46%, #0f172a 100%)',
+          background: 'linear-gradient(165deg, #ea580c 0%, #c2410c 46%, #431407 100%)',
         }}
       />
       <div
@@ -21,8 +21,8 @@ export function AuthVisualPanel({ title, description }: AuthVisualPanelProps) {
           backgroundSize: '20px 20px',
         }}
       />
-      <div className="absolute -right-10 top-[18%] h-56 w-56 rounded-full bg-sky-400/12 blur-3xl" />
-      <div className="absolute -left-12 bottom-[8%] h-64 w-64 rounded-full bg-indigo-500/15 blur-3xl" />
+      <div className="absolute -right-10 top-[18%] h-56 w-56 rounded-full bg-amber-400/20 blur-3xl" />
+      <div className="absolute -left-12 bottom-[8%] h-64 w-64 rounded-full bg-orange-500/25 blur-3xl" />
       <div className="absolute right-6 top-10 h-28 w-28 rounded-full border border-white/10 opacity-80" />
       <div className="absolute bottom-16 right-10 h-16 w-16 rotate-12 rounded-xl border border-white/5 bg-white/5" />
 

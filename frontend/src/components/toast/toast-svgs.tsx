@@ -115,8 +115,8 @@ export function ToastGlyphInfo({ className }: GlyphProps) {
     >
       <defs>
         <linearGradient id={gid} x1="20" y1="16" x2="98" y2="104" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#EFF6FF" />
-          <stop offset="1" stopColor="#DBEAFE" />
+          <stop stopColor="#FFF7ED" />
+          <stop offset="1" stopColor="#FFEDD5" />
         </linearGradient>
         <filter
           id={fid}
@@ -132,9 +132,9 @@ export function ToastGlyphInfo({ className }: GlyphProps) {
       </defs>
       <g filter={`url(#${fid})`}>
         <circle cx="60" cy="60" r="44" fill={`url(#${gid})`} />
-        <circle cx="60" cy="60" r="43.5" fill="none" stroke="#BFDBFE" strokeWidth="1" />
+        <circle cx="60" cy="60" r="43.5" fill="none" stroke="#FED7AA" strokeWidth="1" />
       </g>
-      <circle cx="60" cy="60" r="24" fill="#2563EB" />
+      <circle cx="60" cy="60" r="24" fill="#EA580C" />
       <path d="M60 57V70" stroke="white" strokeWidth="5" strokeLinecap="round" />
       <circle cx="60" cy="49" r="3.5" fill="white" />
     </svg>
@@ -237,7 +237,7 @@ export function ToastGlyphInfoMini({ className }: GlyphProps) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <circle cx="10" cy="10" r="10" fill="#2563EB" />
+      <circle cx="10" cy="10" r="10" fill="#EA580C" />
       <path d="M10 8.5V13" stroke="white" strokeWidth="2" strokeLinecap="round" />
       <circle cx="10" cy="6" r="1.25" fill="white" />
     </svg>

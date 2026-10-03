@@ -44,21 +44,38 @@ async function capture() {
     await new Promise(r => setTimeout(r, 1000));
     await page.screenshot({ path: path.join(screenshotsDir, 'auth', 'forgot-password.png') });
 
-    // 4. Log in
-    console.log('Logging in as demo@connect.com...');
-    await page.goto('http://localhost:3001/login', { waitUntil: 'networkidle2', timeout: 30000 });
-    await page.type('input[type="email"]', 'demo@connect.com');
-    await page.type('input[type="password"]', 'Demo@12345');
-    await page.click('button[type="submit"]');
+    // 4. Log in & inject auth state
+    console.log('Authenticating demo@connect.com via backend API...');
+    const loginRes = await fetch('http://localhost:3000/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'demo@connect.com', password: 'Demo@12345' }),
+    });
+    const loginJson = await loginRes.json();
+    const authData = loginJson.data || loginJson;
 
-    // Wait for navigation after login
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(() => {});
-    await new Promise(r => setTimeout(r, 2500));
+    await page.goto('http://localhost:3001/login', { waitUntil: 'networkidle2', timeout: 30000 });
+    await page.evaluate((data) => {
+      localStorage.setItem(
+        'connect-auth',
+        JSON.stringify({
+          state: {
+            user: data.user,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            currentOrganizationId: data.user.currentOrganizationId,
+            status: 'authenticated',
+            _hasHydrated: true,
+          },
+          version: 0,
+        })
+      );
+    }, authData);
 
     // 5. Dashboard Overview
     console.log('Capturing Dashboard Overview...');
     await page.goto('http://localhost:3001/', { waitUntil: 'networkidle2', timeout: 30000 });
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 2500));
     await page.screenshot({ path: path.join(screenshotsDir, 'dashboard', 'dashboard-overview.png') });
     await page.screenshot({ path: path.join(screenshotsDir, 'dashboard', '1.png') });
 

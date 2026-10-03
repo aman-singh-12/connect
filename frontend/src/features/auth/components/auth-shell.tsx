@@ -38,7 +38,7 @@ export function AuthShell({
         <div
           className={`mx-auto flex min-h-dvh w-full max-w-[1180px] flex-col overflow-hidden bg-white lg:min-h-0 ${desktopMinH} lg:h-auto lg:w-full lg:max-w-[1180px] lg:flex-row lg:rounded-3xl lg:border lg:border-neutral-200/80 lg:shadow-[0_25px_50px_-12px_rgba(15,23,42,0.12),0_0_0_1px_rgba(15,23,42,0.04)]`}
         >
-          {/* Desktop blue panel */}
+          {/* Desktop visual panel */}
           <div className={`relative hidden min-h-0 shrink-0 overflow-hidden lg:block ${visualW}`}>
             {visual ?? <AuthVisualPanel title={panelTitle} description={panelDescription} />}
           </div>

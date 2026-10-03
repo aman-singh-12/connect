@@ -55,8 +55,8 @@ const VARIANT_CONFIG = {
   },
   info: {
     Glyph: ToastGlyphInfoMini,
-    badgeBg: 'bg-blue-100',
-    progressFill: 'bg-blue-500/55',
+    badgeBg: 'bg-primary-100',
+    progressFill: 'bg-primary-500/55',
   },
 } as const;
 

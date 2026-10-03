@@ -13,8 +13,8 @@ import {
 import type { Task } from '@/types';
 import { buildTaskTrendData } from '@/features/dashboard/lib/chart-data';
 
-const PRIMARY = '#0C5FD9';
-const PRIMARY_SOFT = '#93C5FD';
+const PRIMARY = '#EA580C';
+const PRIMARY_SOFT = '#FDBA74';
 const GRID = '#E2E8F0';
 
 interface TasksTrendChartProps {
