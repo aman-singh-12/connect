@@ -1,6 +1,18 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
+function formatSocketUrl(rawUrl?: string): string {
+  if (!rawUrl) return 'http://localhost:3000';
+  let url = rawUrl.trim();
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('ws://') && !url.startsWith('wss://')) {
+    url = `https://${url}`;
+  }
+  return url;
+}
+
+const SOCKET_URL = formatSocketUrl(process.env.NEXT_PUBLIC_SOCKET_URL);
 
 let socket: Socket | null = null;
 let currentOrgId: string | null = null;

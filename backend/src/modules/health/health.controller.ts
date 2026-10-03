@@ -24,4 +24,10 @@ export class HealthController {
       () => this.redis.isHealthy('redis'),
     ]);
   }
+
+  @Get('live')
+  @Public()
+  live() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }

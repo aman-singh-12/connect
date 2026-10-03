@@ -15,7 +15,13 @@ x-backend-env: &backend-env
   STRIPE_WEBHOOK_SECRET: ""
   STRIPE_PRICE_ID_PRO: ""
   STRIPE_PRICE_ID_ENTERPRISE: ""
-  FRONTEND_URL: http://localhost:3000
+  FRONTEND_URL: http://localhost:3001
+  SMTP_HOST: smtp.gmail.com
+  SMTP_PORT: "465"
+  SMTP_SECURE: "true"
+  SMTP_USER: aman7t6s@gmail.com
+  SMTP_PASS: gklpnzcuaodhjala
+  SMTP_FROM: Connect <aman7t6s@gmail.com>
 
 services:
   postgres:
@@ -69,7 +75,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:3000/api/v1/health || exit 1"]
+      test: ["CMD-SHELL", "wget --spider -q http://127.0.0.1:3000/api/v1/health || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 5

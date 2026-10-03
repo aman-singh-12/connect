@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 
+import * as path from 'path';
+
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -16,6 +18,7 @@ import { ConfigService } from '@nestjs/config';
           password: config.get<string>('database.password'),
           database: config.get<string>('database.database'),
           autoLoadEntities: true,
+          entities: [path.join(__dirname, '..', '..', '**', '*.entity.{ts,js}')],
           synchronize: false,
           logging: process.env.NODE_ENV === 'development',
         };

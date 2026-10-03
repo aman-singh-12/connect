@@ -2,7 +2,19 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/auth.store';
 import { updateToken as updateSocketToken } from '@/lib/socket';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+function formatApiUrl(rawUrl?: string): string {
+  if (!rawUrl) return 'http://localhost:3000';
+  let url = rawUrl.trim();
+  if (url.endsWith('/')) {
+    url = url.slice(0, -1);
+  }
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  return url;
+}
+
+const API_BASE_URL = formatApiUrl(process.env.NEXT_PUBLIC_API_URL);
 
 export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,

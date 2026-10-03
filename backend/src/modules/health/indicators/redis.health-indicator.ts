@@ -10,9 +10,14 @@ export class RedisHealthIndicator extends HealthIndicator {
   }
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    const result = await this.redis.ping();
-    const isHealthy = result === 'PONG';
-
-    return this.getStatus(key, isHealthy);
+    try {
+      const result = await this.redis.ping();
+      const isHealthy = result === 'PONG';
+      return this.getStatus(key, isHealthy);
+    } catch (error) {
+      return this.getStatus(key, false, {
+        message: (error as Error)?.message || 'Redis health check failed',
+      });
+    }
   }
 }
