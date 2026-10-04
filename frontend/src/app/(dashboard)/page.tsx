@@ -60,8 +60,9 @@ export default function DashboardPage() {
   });
 
   const { data: activityData } = useActivity({ limit: 10 });
-  const { data: members, isLoading: membersLoading } = useOrgMembers();
-  const { data: pendingInvites, isLoading: invitesLoading } = usePendingInvites();
+  const { data: members } = useOrgMembers();
+  const { data: pendingInvites } = usePendingInvites();
+
 
   const totalProjects = projectsData?.meta?.total ?? 0;
   const totalTasks = tasksData?.meta?.total ?? 0;
@@ -118,12 +119,13 @@ export default function DashboardPage() {
     );
   }
 
-  const dataLoading = projectsLoading || tasksLoading || membersLoading || invitesLoading;
+  const dataLoading = projectsLoading || tasksLoading;
   const dataError = projectsError || tasksError;
 
   if (dataLoading) {
     return <PageSkeleton variant="dashboard" />;
   }
+
 
   if (dataError) {
     return <ErrorState onRetry={() => { refetchProjects(); refetchTasks(); }} />;

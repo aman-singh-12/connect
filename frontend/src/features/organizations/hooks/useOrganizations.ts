@@ -13,9 +13,12 @@ import type { OrganizationWithRole, Membership, Role, PendingInvite } from '@/ty
 
 export const orgKeys = {
   all: ['organizations'] as const,
-  current: ['organizations', 'current'] as const,
-  members: ['organizations', 'members'] as const,
-  invites: ['organizations', 'invites'] as const,
+  currentRoot: ['organizations', 'current'] as const,
+  current: (orgId: string | null) => ['organizations', 'current', orgId] as const,
+  membersRoot: ['organizations', 'members'] as const,
+  members: (orgId: string | null) => ['organizations', 'members', orgId] as const,
+  invitesRoot: ['organizations', 'invites'] as const,
+  invites: (orgId: string | null) => ['organizations', 'invites', orgId] as const,
 };
 
 export function useOrganizations() {
@@ -31,9 +34,14 @@ export function useCurrentOrganization() {
   const gate = computeOrgWorkspaceGate(orgs, isSuccess, currentOrganizationId);
 
   return useQuery({
-    queryKey: orgKeys.current,
-    queryFn: () => organizationsApi.getCurrent().then((r) => r.data.data!),
+    queryKey: orgKeys.current(currentOrganizationId),
+    queryFn: () => {
+      const found = orgs?.find((o) => o.id === currentOrganizationId);
+      if (found) return found;
+      return organizationsApi.getCurrent().then((r) => r.data.data!);
+    },
     enabled: gate,
+    initialData: () => orgs?.find((o) => o.id === currentOrganizationId),
   });
 }
 
@@ -43,7 +51,7 @@ export function useOrgMembers() {
   const gate = computeOrgWorkspaceGate(orgs, isSuccess, currentOrganizationId);
 
   return useQuery({
-    queryKey: orgKeys.members,
+    queryKey: orgKeys.members(currentOrganizationId),
     queryFn: () => organizationsApi.getMembers().then((r) => r.data.data! as Membership[]),
     enabled: gate,
   });
@@ -55,7 +63,7 @@ export function usePendingInvites() {
   const gate = computeOrgWorkspaceGate(orgs, isSuccess, currentOrganizationId);
 
   return useQuery({
-    queryKey: orgKeys.invites,
+    queryKey: orgKeys.invites(currentOrganizationId),
     queryFn: () =>
       organizationsApi.listPendingInvites().then((r) => r.data.data! as PendingInvite[]),
     enabled: gate,
@@ -96,9 +104,9 @@ export function useSwitchOrganization() {
       setCurrentOrganization(orgId);
       joinOrgRoom(orgId);
 
-      queryClient.invalidateQueries({ queryKey: orgKeys.current });
-      queryClient.invalidateQueries({ queryKey: orgKeys.members });
-      queryClient.invalidateQueries({ queryKey: orgKeys.invites });
+      queryClient.invalidateQueries({ queryKey: orgKeys.currentRoot });
+      queryClient.invalidateQueries({ queryKey: orgKeys.membersRoot });
+      queryClient.invalidateQueries({ queryKey: orgKeys.invitesRoot });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['activity'] });
@@ -113,8 +121,8 @@ export function useCreateInvite() {
     mutationFn: (payload: CreateInvitePayload) =>
       organizationsApi.createInvite(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orgKeys.invites });
-      queryClient.invalidateQueries({ queryKey: orgKeys.members });
+      queryClient.invalidateQueries({ queryKey: orgKeys.invitesRoot });
+      queryClient.invalidateQueries({ queryKey: orgKeys.membersRoot });
     },
   });
 }
@@ -125,7 +133,7 @@ export function useResendInvite() {
   return useMutation({
     mutationFn: (inviteId: string) => organizationsApi.resendInvite(inviteId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orgKeys.invites });
+      queryClient.invalidateQueries({ queryKey: orgKeys.invitesRoot });
     },
   });
 }
@@ -137,12 +145,13 @@ export function useAcceptInvite() {
     mutationFn: (token: string) => organizationsApi.acceptInvite(token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: orgKeys.all });
-      queryClient.invalidateQueries({ queryKey: orgKeys.current });
-      queryClient.invalidateQueries({ queryKey: orgKeys.members });
-      queryClient.invalidateQueries({ queryKey: orgKeys.invites });
+      queryClient.invalidateQueries({ queryKey: orgKeys.currentRoot });
+      queryClient.invalidateQueries({ queryKey: orgKeys.membersRoot });
+      queryClient.invalidateQueries({ queryKey: orgKeys.invitesRoot });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['activity'] });
     },
   });
 }
+

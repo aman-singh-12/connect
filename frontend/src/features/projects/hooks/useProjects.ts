@@ -23,20 +23,22 @@ function normalizeParams(params?: ProjectListParams): ProjectListParams | undefi
 
 export const projectKeys = {
   all: ['projects'] as const,
-  list: (params?: ProjectListParams) => ['projects', 'list', normalizeParams(params)] as const,
+  list: (orgId: string | null, params?: ProjectListParams) =>
+    ['projects', 'list', orgId, normalizeParams(params)] as const,
   detail: (id: string) => ['projects', 'detail', id] as const,
 };
 
 export function useProjects(params?: ProjectListParams) {
   const normalized = normalizeParams(params);
-  const { hasValidOrgContext } = useOrgWorkspaceContext();
+  const { hasValidOrgContext, currentOrganizationId } = useOrgWorkspaceContext();
 
   return useQuery({
-    queryKey: projectKeys.list(normalized),
+    queryKey: projectKeys.list(currentOrganizationId, normalized),
     queryFn: () => projectsApi.list(normalized).then((r) => r.data),
     enabled: hasValidOrgContext,
   });
 }
+
 
 export function useProject(id: string) {
   const { hasValidOrgContext } = useOrgWorkspaceContext();

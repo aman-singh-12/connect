@@ -42,7 +42,7 @@ export function useSocketEvents() {
         // Refetch stale data after reconnect — events during gap are lost
         queryClient.invalidateQueries({ queryKey: taskKeys.all });
         queryClient.invalidateQueries({ queryKey: projectKeys.all });
-        queryClient.invalidateQueries({ queryKey: orgKeys.members });
+        queryClient.invalidateQueries({ queryKey: orgKeys.membersRoot });
         queryClient.invalidateQueries({ queryKey: ['activity'] });
       }
       hasConnectedBefore.current = true;
@@ -116,8 +116,9 @@ export function useSocketEvents() {
 
         case SocketEvents.MEMBER_INVITED:
         case SocketEvents.MEMBER_JOINED:
-          queryClient.invalidateQueries({ queryKey: orgKeys.members });
+          queryClient.invalidateQueries({ queryKey: orgKeys.membersRoot });
           break;
+
 
         case SocketEvents.SUBSCRIPTION_CREATED:
         case SocketEvents.SUBSCRIPTION_UPDATED:

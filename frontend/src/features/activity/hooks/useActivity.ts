@@ -7,15 +7,17 @@ import type { ActivityListParams } from '@/types';
 
 export const activityKeys = {
   all: ['activity'] as const,
-  list: (params?: ActivityListParams) => ['activity', 'list', params] as const,
+  list: (orgId: string | null, params?: ActivityListParams) =>
+    ['activity', 'list', orgId, params] as const,
 };
 
 export function useActivity(params?: ActivityListParams) {
-  const { hasValidOrgContext } = useOrgWorkspaceContext();
+  const { hasValidOrgContext, currentOrganizationId } = useOrgWorkspaceContext();
 
   return useQuery({
-    queryKey: activityKeys.list(params),
+    queryKey: activityKeys.list(currentOrganizationId, params),
     queryFn: () => activityApi.list(params).then((r) => r.data),
     enabled: hasValidOrgContext,
   });
 }
+

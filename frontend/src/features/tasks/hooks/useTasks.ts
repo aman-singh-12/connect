@@ -22,7 +22,8 @@ function normalizeFilters(filters?: TaskFilters): TaskFilters | undefined {
 
 export const taskKeys = {
   all: ['tasks'] as const,
-  list: (filters?: TaskFilters) => ['tasks', 'list', normalizeFilters(filters)] as const,
+  list: (orgId: string | null, filters?: TaskFilters) =>
+    ['tasks', 'list', orgId, normalizeFilters(filters)] as const,
   byProject: (projectId: string, filters?: TaskFilters) =>
     ['tasks', 'project', projectId, normalizeFilters(filters)] as const,
   detail: (id: string) => ['tasks', 'detail', id] as const,
@@ -30,14 +31,15 @@ export const taskKeys = {
 
 export function useTasks(filters?: TaskFilters) {
   const normalized = normalizeFilters(filters);
-  const { hasValidOrgContext } = useOrgWorkspaceContext();
+  const { hasValidOrgContext, currentOrganizationId } = useOrgWorkspaceContext();
 
   return useQuery({
-    queryKey: taskKeys.list(normalized),
+    queryKey: taskKeys.list(currentOrganizationId, normalized),
     queryFn: () => tasksApi.listAll(normalized).then((r) => r.data),
     enabled: hasValidOrgContext,
   });
 }
+
 
 export function useTasksByProject(projectId: string, filters?: TaskFilters) {
   const normalized = normalizeFilters(filters);
