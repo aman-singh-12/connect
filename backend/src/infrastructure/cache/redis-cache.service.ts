@@ -15,7 +15,7 @@ export class RedisCacheService implements ICacheService {
 
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
-  private withTimeout<T>(promise: Promise<T>, ms = 500): Promise<T> {
+  private withTimeout<T>(promise: Promise<T>, ms = 100): Promise<T> {
     return Promise.race([
       promise,
       new Promise<T>((_, reject) =>
@@ -33,18 +33,17 @@ export class RedisCacheService implements ICacheService {
       this.memoryCache.delete(key);
     }
 
-    if (this.redis.status !== 'ready') {
+    if (!this.redis || this.redis.status !== 'ready') {
       return null;
     }
 
     try {
-      const raw = await this.withTimeout(this.redis.get(key), 500);
+      const raw = await this.withTimeout(this.redis.get(key), 100);
       if (raw === null) return null;
       const parsed = JSON.parse(raw) as T;
       this.memoryCache.set(key, { value: parsed, expiry: now + 30000 });
       return parsed;
-    } catch (err) {
-      this.logger.debug(`Redis get failed for key "${key}": ${(err as Error).message}`);
+    } catch {
       return null;
     }
   }
@@ -54,15 +53,15 @@ export class RedisCacheService implements ICacheService {
     const now = Date.now();
     this.memoryCache.set(key, { value, expiry: now + ttl * 1000 });
 
-    if (this.redis.status !== 'ready') {
+    if (!this.redis || this.redis.status !== 'ready') {
       return;
     }
 
     try {
       const serialized = JSON.stringify(value);
-      await this.withTimeout(this.redis.set(key, serialized, 'EX', ttl), 500);
-    } catch (err) {
-      this.logger.debug(`Redis set failed for key "${key}": ${(err as Error).message}`);
+      await this.withTimeout(this.redis.set(key, serialized, 'EX', ttl), 100);
+    } catch {
+      // Ignored
     }
   }
 

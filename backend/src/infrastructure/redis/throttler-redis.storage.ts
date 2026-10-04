@@ -15,7 +15,7 @@ export class ThrottlerRedisStorage {
 
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
-  private withTimeout<T>(promise: Promise<T>, ms = 500): Promise<T> {
+  private withTimeout<T>(promise: Promise<T>, ms = 100): Promise<T> {
     return Promise.race([
       promise,
       new Promise<T>((_, reject) =>
@@ -75,19 +75,19 @@ export class ThrottlerRedisStorage {
     isBlocked: boolean;
     timeToBlockExpire: number;
   }> {
-    if (this.redis.status !== 'ready') {
+    if (!this.redis || this.redis.status !== 'ready') {
       return this.incrementMemory(key, ttl, limit, blockDuration);
     }
 
     try {
       const redisKey = `rate:${key}`;
-      const totalHits = await this.withTimeout(this.redis.incr(redisKey), 500);
+      const totalHits = await this.withTimeout(this.redis.incr(redisKey), 100);
 
       if (totalHits === 1) {
-        await this.withTimeout(this.redis.expire(redisKey, Math.ceil(ttl / 1000)), 500).catch(() => {});
+        await this.withTimeout(this.redis.expire(redisKey, Math.ceil(ttl / 1000)), 100).catch(() => {});
       }
 
-      const ttlRemaining = await this.withTimeout(this.redis.ttl(redisKey), 500).catch(() => Math.ceil(ttl / 1000));
+      const ttlRemaining = await this.withTimeout(this.redis.ttl(redisKey), 100).catch(() => Math.ceil(ttl / 1000));
 
       const blockKey = `rate:block:${key}`;
       let isBlocked = false;
