@@ -21,7 +21,7 @@ services:
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
-        value: Connect
+        value: Taskforge
       - key: DB_SSL
         value: "true"
       - key: DB_SSL_REJECT_UNAUTHORIZED
