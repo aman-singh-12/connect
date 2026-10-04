@@ -161,19 +161,6 @@ export function Sidebar() {
             </div>
           ))}
         </nav>
-
-        {/* Footer */}
-        <div className="shrink-0 border-t border-neutral-100 p-4">
-          <div className="rounded-xl bg-gradient-to-br from-primary-50 to-primary-100/50 p-3.5 border border-primary-200/50">
-            <p className="text-xs font-semibold text-primary-800">Connect Pro</p>
-            <p className="mt-0.5 text-[11px] leading-relaxed text-primary-600/80">
-              Unlock advanced analytics, automations, and more.
-            </p>
-            <button className="mt-2.5 w-full rounded-lg bg-primary-600 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-primary-700 cursor-pointer">
-              Upgrade Now
-            </button>
-          </div>
-        </div>
       </aside>
     </>
   );
