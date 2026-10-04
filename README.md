@@ -7,7 +7,7 @@ It includes organization-based multi-tenancy, role-based access control, Kanban 
 
 ## Live Demo
 
-**Demo:** [https://connect-demo.vercel.app](https://connect-demo.vercel.app)
+**Demo:** [https://connect.vercel.app](https://connect-weld-alpha.vercel.app/login)
 
 ### Demo Account
 
