@@ -2,9 +2,9 @@ import { Module, Global, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis, { RedisOptions } from 'ioredis';
 import { RedisShutdownService } from './redis-shutdown.service';
+import { REDIS_CLIENT, BULLMQ_REDIS_CLIENT } from './redis.constants';
 
-export const REDIS_CLIENT = 'REDIS_CLIENT';
-export const BULLMQ_REDIS_CLIENT = 'BULLMQ_REDIS_CLIENT';
+export { REDIS_CLIENT, BULLMQ_REDIS_CLIENT };
 
 function buildRedisClient(config: ConfigService, forBullMQ: boolean): Redis {
   const logger = new Logger(forBullMQ ? 'BullMQRedis' : 'AppRedis');

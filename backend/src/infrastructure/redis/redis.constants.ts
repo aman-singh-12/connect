@@ -1,0 +1,2 @@
+export const REDIS_CLIENT = 'REDIS_CLIENT';
+export const BULLMQ_REDIS_CLIENT = 'BULLMQ_REDIS_CLIENT';
