@@ -15,19 +15,28 @@ export class QueueService implements IQueueService {
   ) {}
 
   async addJob<T>(name: string, data: T, opts?: JobOptions): Promise<void> {
-    const queue = this.resolveQueue(name);
+    try {
+      const queue = this.resolveQueue(name);
 
-    await queue.add(name, data, {
-      delay: opts?.delay,
-      attempts: opts?.attempts ?? 3,
-      priority: opts?.priority,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
-      },
-    });
+      const addPromise = queue.add(name, data, {
+        delay: opts?.delay,
+        attempts: opts?.attempts ?? 3,
+        priority: opts?.priority,
+        backoff: {
+          type: 'exponential',
+          delay: 1000,
+        },
+      });
 
-    this.logger.debug(`Job enqueued: ${name}`);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Queue addJob timed out after 2000ms for ${name}`)), 2000),
+      );
+
+      await Promise.race([addPromise, timeoutPromise]);
+      this.logger.debug(`Job enqueued: ${name}`);
+    } catch (err) {
+      this.logger.warn(`Failed to enqueue job "${name}": ${(err as Error).message}`);
+    }
   }
 
   private resolveQueue(name: string): Queue {
@@ -35,3 +44,4 @@ export class QueueService implements IQueueService {
     return this.activityQueue;
   }
 }
+

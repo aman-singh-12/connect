@@ -1,7 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import Redis from 'ioredis';
-import { REDIS_CLIENT } from '../redis';
+import { BULLMQ_REDIS_CLIENT } from '../redis';
 import { QueueService, ACTIVITY_QUEUE, NOTIFICATIONS_QUEUE } from './queue.service';
 import { QUEUE_SERVICE } from './queue.interface';
 import { ActivityWorker } from './workers/activity.worker';
@@ -13,13 +13,13 @@ import { ActivityModule } from '../../modules/activity/activity.module';
   providers: [
     {
       provide: ACTIVITY_QUEUE,
-      inject: [REDIS_CLIENT],
+      inject: [BULLMQ_REDIS_CLIENT],
       useFactory: (redis: Redis) =>
         new Queue('activity', { connection: redis, prefix: 'bull' }),
     },
     {
       provide: NOTIFICATIONS_QUEUE,
-      inject: [REDIS_CLIENT],
+      inject: [BULLMQ_REDIS_CLIENT],
       useFactory: (redis: Redis) =>
         new Queue('notifications', { connection: redis, prefix: 'bull' }),
     },
@@ -32,3 +32,4 @@ import { ActivityModule } from '../../modules/activity/activity.module';
   exports: [QUEUE_SERVICE],
 })
 export class QueueModule {}
+
