@@ -1,6 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
-import { REDIS_CLIENT } from './redis.module';
+import { REDIS_CLIENT } from './redis.constants';
 
 interface MemoryRateEntry {
   hits: number;
@@ -94,11 +94,11 @@ export class ThrottlerRedisStorage {
       let timeToBlockExpire = 0;
 
       if (blockDuration > 0) {
-        const blockExists = await this.withTimeout(this.redis.exists(blockKey), 500).catch(() => 0);
+        const blockExists = await this.withTimeout(this.redis.exists(blockKey), 100).catch(() => 0);
         isBlocked = blockExists === 1;
 
         if (isBlocked) {
-          const blockTtl = await this.withTimeout(this.redis.ttl(blockKey), 500).catch(() => 0);
+          const blockTtl = await this.withTimeout(this.redis.ttl(blockKey), 100).catch(() => 0);
           timeToBlockExpire = blockTtl * 1000;
         } else if (totalHits > limit) {
           await this.withTimeout(
@@ -108,7 +108,7 @@ export class ThrottlerRedisStorage {
               'EX',
               Math.ceil(blockDuration / 1000),
             ),
-            500,
+            100,
           ).catch(() => {});
           isBlocked = true;
           timeToBlockExpire = blockDuration;
