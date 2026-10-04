@@ -8,8 +8,6 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { AppError } from '../../shared/errors/app-error';
 import { ErrorCodes } from '../../shared/errors/error-codes';
 
-const MEMBERSHIP_CACHE_TTL = 300; // 5 minutes
-
 @Injectable()
 export class OrgMembershipGuard implements CanActivate {
   constructor(

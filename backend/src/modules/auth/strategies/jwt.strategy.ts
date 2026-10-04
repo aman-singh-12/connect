@@ -1,9 +1,8 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../../users/services/users.service';
-import { ICacheService, CACHE_SERVICE } from '../../../infrastructure/cache';
 
 const userCache = new Map<
   string,
