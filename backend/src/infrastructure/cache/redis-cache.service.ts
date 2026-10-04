@@ -68,28 +68,28 @@ export class RedisCacheService implements ICacheService {
   async del(key: string): Promise<void> {
     this.memoryCache.delete(key);
 
-    if (this.redis.status !== 'ready') {
+    if (!this.redis || this.redis.status !== 'ready') {
       return;
     }
 
     try {
-      await this.withTimeout(this.redis.del(key), 500);
-    } catch (err) {
-      this.logger.debug(`Redis del failed for key "${key}": ${(err as Error).message}`);
+      await this.withTimeout(this.redis.del(key), 100);
+    } catch {
+      // Ignored
     }
   }
 
   async reset(): Promise<void> {
     this.memoryCache.clear();
 
-    if (this.redis.status !== 'ready') {
+    if (!this.redis || this.redis.status !== 'ready') {
       return;
     }
 
     try {
-      await this.withTimeout(this.redis.flushdb(), 1000);
-    } catch (err) {
-      this.logger.debug(`Redis reset failed: ${(err as Error).message}`);
+      await this.withTimeout(this.redis.flushdb(), 100);
+    } catch {
+      // Ignored
     }
   }
 }
