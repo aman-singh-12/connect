@@ -187,9 +187,11 @@ function RegisterPageContent() {
           </div>
         </div>
 
-        <Button type="submit" loading={register.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
-          Create workspace
-        </Button>
+        <div className="hidden lg:block">
+          <Button type="submit" loading={register.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
+            Create workspace
+          </Button>
+        </div>
 
         <div className={AUTH_MOBILE_PRIMARY_DOCK}>
           <div className={AUTH_MOBILE_DOCK_INNER}>

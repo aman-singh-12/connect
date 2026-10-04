@@ -140,9 +140,11 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        <Button type="submit" loading={forgot.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
-          Send reset link
-        </Button>
+        <div className="hidden lg:block">
+          <Button type="submit" loading={forgot.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
+            Send reset link
+          </Button>
+        </div>
 
         <div className={AUTH_MOBILE_PRIMARY_DOCK}>
           <div className={AUTH_MOBILE_DOCK_INNER}>

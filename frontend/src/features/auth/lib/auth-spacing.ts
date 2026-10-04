@@ -43,4 +43,4 @@ export const AUTH_MOBILE_DOCK_INNER = 'mx-auto w-full max-w-[430px]';
 
 /** Desktop-only primary submit (paired with dock duplicate on mobile) */
 export const AUTH_DESKTOP_SUBMIT =
-  'mt-5 hidden min-h-[48px] w-full text-[15px] lg:inline-flex lg:w-full';
+  'mt-5 !hidden min-h-[48px] w-full text-[15px] lg:!inline-flex lg:w-full';

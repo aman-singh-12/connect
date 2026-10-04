@@ -176,9 +176,11 @@ function ResetPasswordForm() {
           </div>
         </div>
 
-        <Button type="submit" loading={reset.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
-          Update password
-        </Button>
+        <div className="hidden lg:block">
+          <Button type="submit" loading={reset.isPending} className={AUTH_DESKTOP_SUBMIT} size="lg">
+            Update password
+          </Button>
+        </div>
 
         <div className={AUTH_MOBILE_PRIMARY_DOCK}>
           <div className={AUTH_MOBILE_DOCK_INNER}>
