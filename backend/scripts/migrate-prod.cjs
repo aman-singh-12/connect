@@ -7,6 +7,7 @@
 require('reflect-metadata');
 
 const path = require('path');
+const { seed } = require('./seed-demo-data.cjs');
 
 const configPath = path.join(
   __dirname,
@@ -31,6 +32,13 @@ async function main() {
       );
     } else {
       console.log('[migrate] No pending migrations');
+    }
+
+    // Seed demo workspace data so the dashboard is fully populated
+    try {
+      await seed(dataSource);
+    } catch (seedErr) {
+      console.warn('[migrate] Seeding skipped or warning:', seedErr.message);
     }
   } finally {
     await dataSource.destroy();

@@ -42,6 +42,14 @@ export class OrgMembershipGuard implements CanActivate {
     if (!orgId) {
       const user = await this.usersService.findById(userId);
       orgId = user?.currentOrganizationId ?? undefined;
+      if (!orgId) {
+        const memberships =
+          await this.membershipsService.listUserMemberships(userId);
+        if (memberships.length > 0) {
+          orgId = memberships[0].organizationId;
+          await this.usersService.updateCurrentOrg(userId, orgId);
+        }
+      }
     }
 
     if (!orgId) {

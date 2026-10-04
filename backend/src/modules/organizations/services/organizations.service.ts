@@ -71,8 +71,31 @@ export class OrganizationsService {
   }
 
   async listUserOrganizations(userId: string) {
-    const memberships =
+    let memberships =
       await this.membershipsService.listUserMemberships(userId);
+
+    if (memberships.length === 0) {
+      const user = await this.usersService.findById(userId);
+      if (user) {
+        const defaultOrg =
+          await this.organizationsRepository.findBySlug('connect-workspace');
+        if (defaultOrg) {
+          await this.membershipsService.createMembership(
+            userId,
+            defaultOrg.id,
+            Role.ADMIN,
+          );
+          await this.usersService.updateCurrentOrg(userId, defaultOrg.id);
+        } else {
+          const orgName = user.firstName
+            ? `${user.firstName}'s Workspace`
+            : 'Connect Workspace';
+          await this.createOrganization(userId, { name: orgName });
+        }
+        memberships = await this.membershipsService.listUserMemberships(userId);
+      }
+    }
+
     return memberships.map((m) => ({
       ...m.organization,
       role: m.role,
