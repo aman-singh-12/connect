@@ -67,7 +67,7 @@ function LoginPageContent() {
       }
       panelDescription="Plan milestones, assign ownership, and keep everyone aligned from one workspace."
     >
-      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col lg:block lg:flex-none">
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col touch-pan-y lg:block lg:flex-none">
         <div className={AUTH_MOBILE_SCROLL_COLUMN}>
           <header className={AUTH_HEADER_SECTION}>
             <h1 className={AUTH_PAGE_TITLE}>Welcome back</h1>

@@ -33,10 +33,10 @@ export function AuthShell({
   const visualW = compactVisual ? 'lg:w-[42%]' : 'lg:w-[46%]';
 
   return (
-    <div className="min-h-dvh w-full bg-white lg:min-h-screen lg:bg-[#f8fafc]">
-      <div className="flex min-h-dvh w-full flex-col lg:box-border lg:min-h-screen lg:justify-center lg:px-6 lg:py-10">
+    <div className="min-h-dvh w-full bg-white touch-pan-y lg:min-h-screen lg:bg-[#f8fafc]">
+      <div className="flex min-h-dvh w-full flex-col touch-pan-y lg:box-border lg:min-h-screen lg:justify-center lg:px-6 lg:py-10">
         <div
-          className={`mx-auto flex min-h-dvh w-full max-w-[1180px] flex-col overflow-hidden bg-white lg:min-h-0 ${desktopMinH} lg:h-auto lg:w-full lg:max-w-[1180px] lg:flex-row lg:rounded-3xl lg:border lg:border-neutral-200/80 lg:shadow-[0_25px_50px_-12px_rgba(15,23,42,0.12),0_0_0_1px_rgba(15,23,42,0.04)]`}
+          className={`mx-auto flex min-h-dvh w-full max-w-[1180px] flex-col bg-white sm:min-h-0 ${desktopMinH} lg:h-auto lg:w-full lg:max-w-[1180px] lg:flex-row lg:rounded-3xl lg:border lg:border-neutral-200/80 lg:shadow-[0_25px_50px_-12px_rgba(15,23,42,0.12),0_0_0_1px_rgba(15,23,42,0.04)] lg:overflow-hidden`}
         >
           {/* Desktop visual panel */}
           <div className={`relative hidden min-h-0 shrink-0 overflow-hidden lg:block ${visualW}`}>
@@ -52,8 +52,8 @@ export function AuthShell({
           </div>
 
           {/* Form column */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-start bg-white lg:min-w-0 lg:flex-1 lg:justify-center">
-            <div className="mx-auto flex w-full max-w-[430px] flex-1 flex-col min-h-0 px-6 pt-6 lg:flex lg:max-h-none lg:flex-none lg:justify-center lg:px-10 lg:py-11 xl:px-11">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-start bg-white touch-pan-y lg:min-w-0 lg:flex-1 lg:justify-center">
+            <div className="mx-auto flex w-full max-w-[430px] flex-1 flex-col min-h-0 px-6 pt-6 touch-pan-y lg:flex lg:max-h-none lg:flex-none lg:justify-center lg:px-10 lg:py-11 xl:px-11">
               {children}
             </div>
           </div>

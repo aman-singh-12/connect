@@ -103,7 +103,7 @@ function RegisterPageContent() {
       }
       panelDescription="Join teams that use Connect to plan, track, and deliver projects with confidence."
     >
-      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col lg:block lg:flex-none">
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col touch-pan-y lg:block lg:flex-none">
         <div className={AUTH_MOBILE_SCROLL_COLUMN}>
           <header className={AUTH_HEADER_SECTION}>
             <h1 className={AUTH_PAGE_TITLE}>Create your workspace</h1>

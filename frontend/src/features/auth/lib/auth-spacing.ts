@@ -31,9 +31,9 @@ export const AUTH_ALERT_MARGIN = 'mb-7';
 export const AUTH_PAGE_TITLE_SECONDARY =
   'text-left text-xl font-bold leading-snug tracking-tight text-neutral-900 sm:text-2xl';
 
-/** Mobile: scrollable column — reserve space for fixed primary dock */
+/** Mobile: scrollable column — reserve space for fixed primary dock with natural touch/drag scrolling */
 export const AUTH_MOBILE_SCROLL_COLUMN =
-  'flex flex-1 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain pb-[calc(7.25rem+env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch] lg:flex-none lg:overflow-visible lg:pb-0';
+  'flex flex-1 flex-col overflow-y-auto overflow-x-hidden pb-[calc(7.25rem+env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch] touch-pan-y lg:flex-none lg:overflow-visible lg:pb-0';
 
 /** Mobile: fixed primary action bar (Sign in, Continue, etc.) — hidden on lg where inline button is used */
 export const AUTH_MOBILE_PRIMARY_DOCK =
