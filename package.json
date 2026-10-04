@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm --prefix backend run start:prod:with-migrations",
-    "start:prod": "npm --prefix backend run start:prod",
-    "start:prod:with-migrations": "npm --prefix backend run start:prod:with-migrations",
-    "dev": "npm --prefix frontend run dev",
-    "dev:backend": "npm --prefix backend run dev",
-    "dev:frontend": "npm --prefix frontend run dev",
-    "dev:all": "npx -y concurrently -n \"backend,frontend\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build": "npm --prefix backend install --include=dev && npm --prefix backend run build",
-    "build:all": "npm --prefix backend install --include=dev && npm --prefix backend run build && npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "node init && npm --prefix backend run start:prod:with-migrations",
+    "start:prod": "node init && npm --prefix backend run start:prod",
+    "start:prod:with-migrations": "node init && npm --prefix backend run start:prod:with-migrations",
+    "dev": "node init && npm --prefix frontend run dev",
+    "dev:backend": "node init && npm --prefix backend run dev",
+    "dev:frontend": "node init && npm --prefix frontend run dev",
+    "dev:all": "node init && npx -y concurrently -n \"backend,frontend\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "node init && npm --prefix backend install --include=dev && npm --prefix backend run build",
+    "build:all": "node init && npm --prefix backend install --include=dev && npm --prefix backend run build && npm --prefix frontend install && npm --prefix frontend run build",
     "install:all": "npm --prefix backend install && npm --prefix frontend install"
   }
 }
