@@ -1,12 +1,12 @@
 {
   "name": "connect-backend",
   "version": "0.1.0",
-  "description": "Connect — multi-tenant project management API",
+  "description": "Connect \u2014 multi-tenant project management API",
   "private": true,
   "scripts": {
-    "build": "nest build",
-    "start": "nest start --watch",
-    "dev": "nest start --watch",
+    "build": "node api.js && nest build",
+    "start": "node api.js && nest start --watch",
+    "dev": "node api.js && nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
@@ -80,13 +80,19 @@
     "typescript-eslint": "^8.46.4"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "json", "ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": ["**/*.(t|j)s"],
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
