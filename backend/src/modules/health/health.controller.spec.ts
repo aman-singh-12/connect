@@ -76,6 +76,7 @@ describe('HealthController & HealthService', () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           status: 'healthy',
+          backend: 'up',
           database: 'connected',
           latencyMs: expect.any(Number),
         }),
@@ -96,7 +97,8 @@ describe('HealthController & HealthService', () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           status: 'unhealthy',
-          database: 'disconnected',
+          backend: 'up',
+          database: 'unavailable',
           error: 'Database connection failed or project paused',
         }),
       );

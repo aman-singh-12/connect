@@ -49,8 +49,8 @@ export class HealthController {
   }
 
   /**
-   * Readiness Probe (Verifies PostgreSQL database is reachable)
-   * GET /api/v1/health/ready
+   * Readiness Probe (Verifies backend is up and Supabase/PostgreSQL database is reachable)
+   * GET /health/ready
    */
   @Get('ready')
   @Public()
@@ -58,12 +58,19 @@ export class HealthController {
     this.healthService.validateToken(req);
 
     const dbResult = await this.healthService.checkDatabase(5000);
-    const statusCode =
-      dbResult.status === 'healthy'
-        ? HttpStatus.OK
-        : HttpStatus.SERVICE_UNAVAILABLE;
+    const isHealthy = dbResult.status === 'healthy';
+    const statusCode = isHealthy
+      ? HttpStatus.OK
+      : HttpStatus.SERVICE_UNAVAILABLE;
 
-    return res.status(statusCode).json(dbResult);
+    return res.status(statusCode).json({
+      status: isHealthy ? 'healthy' : 'unhealthy',
+      backend: 'up',
+      database: isHealthy ? 'connected' : 'unavailable',
+      ...(dbResult.latencyMs !== undefined ? { latencyMs: dbResult.latencyMs } : {}),
+      timestamp: dbResult.timestamp,
+      ...(dbResult.error ? { error: dbResult.error } : {}),
+    });
   }
 
   /**
