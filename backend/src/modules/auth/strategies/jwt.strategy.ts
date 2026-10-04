@@ -5,14 +5,16 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../../users/services/users.service';
 import { ICacheService, CACHE_SERVICE } from '../../../infrastructure/cache';
 
-const USER_CACHE_TTL = 300; // 5 minutes
+const userCache = new Map<
+  string,
+  { id: string; status: string; expiresAt: number }
+>();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     configService: ConfigService,
     private readonly usersService: UsersService,
-    @Inject(CACHE_SERVICE) private readonly cacheService: ICacheService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -22,23 +24,26 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { sub: string }) {
-    const cacheKey = `cache:user:${payload.sub}`;
-    let user = await this.cacheService.get<{ id: string; status: string }>(
-      cacheKey,
-    );
-
-    if (!user) {
-      const dbUser = await this.usersService.findById(payload.sub);
-      if (dbUser) {
-        await this.cacheService.set(cacheKey, dbUser, USER_CACHE_TTL);
-        user = dbUser;
+    const now = Date.now();
+    const cached = userCache.get(payload.sub);
+    if (cached && cached.expiresAt > now) {
+      if (cached.status !== 'active') {
+        throw new UnauthorizedException();
       }
+      return { userId: cached.id };
     }
 
-    if (!user || user.status !== 'active') {
+    const dbUser = await this.usersService.findById(payload.sub);
+    if (!dbUser || dbUser.status !== 'active') {
       throw new UnauthorizedException();
     }
 
-    return { userId: user.id };
+    userCache.set(payload.sub, {
+      id: dbUser.id,
+      status: dbUser.status,
+      expiresAt: now + 60000,
+    });
+
+    return { userId: dbUser.id };
   }
 }

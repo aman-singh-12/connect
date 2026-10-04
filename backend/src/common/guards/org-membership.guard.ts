@@ -60,25 +60,12 @@ export class OrgMembershipGuard implements CanActivate {
       );
     }
 
-    // Request-level cache → Redis cache → DB (layered lookup)
+    // Request-level cache → DB
     const requestCacheKey = `_membership_${userId}_${orgId}`;
     let membership = request[requestCacheKey];
 
     if (!membership) {
-      const redisCacheKey = `cache:membership:${userId}:${orgId}`;
-      membership = await this.cacheService.get(redisCacheKey);
-
-      if (!membership) {
-        membership = await this.membershipsService.getMembership(userId, orgId);
-        if (membership) {
-          await this.cacheService.set(
-            redisCacheKey,
-            membership,
-            MEMBERSHIP_CACHE_TTL,
-          );
-        }
-      }
-
+      membership = await this.membershipsService.getMembership(userId, orgId);
       request[requestCacheKey] = membership;
     }
 
